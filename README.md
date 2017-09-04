@@ -18,13 +18,25 @@ NodeMon (Development)* - Will run script until crash, and then wait for file cha
 \* Are recommended packages, they make things easier for their environment.
 
 ## Production Usage
+
+**If all you want to do is pull a change and restart, do this.**
+```
+ssh collablab@collablab.wpi.edu
+cd code/collablab
+git pull
+sudo service website stop
+sudo service website start
+```
+
+**To set up from scratch, read further**
+
   To use the site in a production setting, follow these steps (some commands may be debian centric and require conversion):
   1. Install dependencies:
     ```
     sudo apt install nodejs redis npm
     sudo npm install -g forever
     ```
-    
+
   2. Clone the repository into some directory:
     `git clone git@github.com:nileshp87/collablab.git`
 
@@ -41,27 +53,27 @@ NodeMon (Development)* - Will run script until crash, and then wait for file cha
     * externalPort, this should be set to 80.
 
   5. Add iptables rules to block communication to the server from anywhere but localhost on the configured internalPort (default: 8080)
-    
+
     `sudo iptables -A INPUT -p tcp --destination-port 8080 -j DROP`
 
   6. Start the redis server:
     ```
     redis-server &
     ```
-    
+
   7. Start with ForeverJS
-    
+
     `forever start index.js`
 
 ## Development Usage
   To setup for development, the steps are slightly more straighforward.
-  
+
   1. Install dependencies:
     ```
     sudo apt install nodejs redis npm
     sudo npm install -g nodemon
     ```
-    
+
   2. Clone the repository into some directory:
     `git clone git@github.com:nileshp87/collablab.git`
 
@@ -74,9 +86,9 @@ NodeMon (Development)* - Will run script until crash, and then wait for file cha
     ```
     redis-server &
     ```
-  
+
   5. Run nodemon on index.js:
     ```
     nodemon index.js
     ```
-  
+

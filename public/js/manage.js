@@ -11,6 +11,10 @@ $('#passwordModal').on('shown.bs.modal', function() {
   $('#currentPassword').focus();
 });
 
+function cancelLogin() {
+  window.location.replace('/');
+}
+
 function login(){
   var idNumber = $("#idNumber").val().trim();
   var password = $("#password").val().trim();
