@@ -34,12 +34,20 @@ internal.get('/schedule', function(req, res){
   res.render('schedule');
 });
 
+internal.get('/about', function(req, res){
+  res.render('about');
+});
+
 internal.get('/', function(req, res){
     res.render('internalIndex');
 });
 
 external.get('/schedule', function(req, res){
   res.render('schedule');
+});
+
+external.get('/about', function(req, res){
+  res.render('about');
 });
 
 external.get('/', common.getLogin, function(req, res){
