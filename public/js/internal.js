@@ -139,6 +139,10 @@ function failedPassword(){
   $('#currentPasswordGroup').addClass('has-error');
 }
 
+function cancelRegistration() {
+  $('#registration').modal('hide');
+}
+
 function submitRegistration(){
   var name = $('#name').val().trim();
   var newId = convertSwipe($('#userIdNumber').val().trim());
