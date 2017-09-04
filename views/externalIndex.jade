@@ -1,4 +1,9 @@
 doctype html
+
+mixin responsive_image(imageUrl)
+  .col-sm-4.top20.pad2
+    img(src="#{imageUrl}").img-responsive
+
 html(lang=en)
   head
     title WPI Collablab - Status
@@ -43,12 +48,9 @@ html(lang=en)
             h3 Located in Higgens 005
 
       row
-        .col-sm-4.top20.pad2
-          img(src="images/ece_bench.jpg").img-responsive
-        .col-sm-4.top20.pad2
-          img(src="images/primary_lab_picture.jpg").img-responsive
-        .col-sm-4.top20.pad2
-          img(src="images/3d_printers.jpg").img-responsive
+        +responsive_image("images/ece_bench.jpg")
+        +responsive_image("images/primary_lab_picture.jpg")
+        +responsive_image("images/3d_printers.jpg")
 
     if user && user.labMonitor === 'true'
       #kickModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
