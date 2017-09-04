@@ -25,18 +25,6 @@ function updatePage(newStatus){
     $('#isOpen').removeClass('text-success');
     $('#isOpen').addClass('text-danger');
   }
-  var newList = '';
-  if(kicking){
-    for(index in newStatus.members){
-      newList += "<button class=\"list-group-item\" onClick=\"kick('" + index +"')\">" + newStatus.members[index] +"</button>";
-    }
-  }else{
-    for(index in newStatus.members){
-      newList += "<li class=\"list-group-item\">" + newStatus.members[index] + '</li>';
-    }
-  }
-  labStatus = newStatus;
-  document.getElementById('who').innerHTML = newList;
 }
 
 function login(){

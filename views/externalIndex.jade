@@ -7,6 +7,7 @@ html(lang=en)
     link(href='css/signin.css', rel='stylesheet')
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', rel='stylesheet')
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css', rel='stylesheet')
+    link(href='css/collab.css', rel='stylesheet')
   body
     nav.navbar.navbar-default
       .container-fluid
@@ -28,23 +29,28 @@ html(lang=en)
             button.pull-right.btn.btn-primary(style='display:inline;' onClick='login()')
               span.glyphicon.glyphicon-log-in  Management
     .container
-      br
       center
         h1
           | The lab is currently&nbsp;
           strong
             span(id='isOpen')
-      .col-md-8.col-md-offset-2
-        br
-        br
-        h3
-          .panel.panel-primary
-            .panel-heading Who is in the lab?
-            .panel-body
-              h4
-                ul.list-group
-                  div(id='who')
-    if user && user.labMonitor == 'true'
+      br
+      br
+      row
+        .col-sm-12
+          center
+            h1 CollabLab is a student run MakerSpace at WPI
+            h3 Located in Higgens 005
+
+      row
+        .col-sm-4.top20.pad2
+          img(src="images/ece_bench.jpg").img-responsive
+        .col-sm-4.top20.pad2
+          img(src="images/primary_lab_picture.jpg").img-responsive
+        .col-sm-4.top20.pad2
+          img(src="images/3d_printers.jpg").img-responsive
+
+    if user && user.labMonitor === 'true'
       #kickModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
         .modal-dialog.modal-md
           .modal-content
@@ -61,6 +67,6 @@ html(lang=en)
     script(src='js/common.js')
     script(src='js/external.js')
     script(src='js/notify.js')
-    if user && user.labMonitor == 'true'
+    if user && user.labMonitor === 'true'
       script
         | kicking = true;
