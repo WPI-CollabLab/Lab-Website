@@ -9,8 +9,58 @@ html(lang=en)
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', rel='stylesheet')
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css', rel='stylesheet')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet')
+    link(href='css/collab.css', rel='stylesheet')
   body
     +default_nav_bar
     .container
-      center
-
+      br
+      br
+      row
+        .col-sm-12
+          row
+            .col-sm-7
+              h4 Description
+              hr
+            .col-sm-5
+              h4 Contact
+              hr
+          row
+            .col-sm-7
+              p
+                 | The WPI CollabLab is a student maker organization which administers
+                 | a member-operated lab space and provides a collaborative community
+                 | with the goal of fostering and facilitating extracurricular student projects at WPI.
+                 | These projects include Robotics, Mechatronics, Electronics, Computer Science,
+                 | cosplay, woodworking, and much more. Members have access to the tools, parts,
+                 | knowledge, inspiration, and assistance  necessary to cultivate their own out-of-class projects.
+                 | The international makerspace movement is growing rapidly.
+                 | Makerspaces tend to be loosely organized, governed by consensus, and infused
+                 | with an almost utopian spirit of cooperation, sharing, and technological enthusiasm.
+                 | Basically, everyone builds what they want, when they want, how they want.
+                 | If one person prefers to focus on one aspect of a project more than another, they just...do.
+                 | If a group of people decide to form together to work on a much larger project
+                 | (e.g. putting a hacker in space) they just...do. It's as easy as that!
+            .col-sm-5
+              .flex-center
+                i.material-icons.right-padded-icon place
+                span Higgins 005 (Behind FRC)
+              br
+              .flex-center
+                i.material-icons.right-padded-icon public
+                a(href='http://collablab.wpi.edu') collablab.wpi.edu
+              br
+              .flex-center
+                i.material-icons.right-padded-icon email
+                a(href='mailto:collablab@wpi.edu') collablab@wpi.edu
+      row
+        .col-sm-12.top40
+          row
+            .col-sm-12
+            h4 Gallery
+            hr
+          row
+            .col-sm-12
+            +responsive_image("images/ece_bench.jpg")
+            +responsive_image("images/primary_lab_picture.jpg")
+            +responsive_image("images/3d_printers.jpg")

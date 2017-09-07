@@ -3,3 +3,12 @@
 .top20 { margin-top:20px; }
 .top40 { margin-top:40px; }
 .pad2 { padding: 2px;}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+}
+
+.right-padded-icon {
+    margin-right: 10px;
+}

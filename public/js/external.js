@@ -18,6 +18,13 @@ function updatePage(newStatus){
     $('#isOpen').removeClass('text-success');
     $('#isOpen').addClass('text-danger');
   }
+  var newList = '';
+  console.log(newStatus.memebers);
+  for(index in newStatus.members){
+    newList += "<li class=\"list-group-item\">" + newStatus.members[index] + '</li>';
+  }
+  labStatus = newStatus;
+  document.getElementById('who').innerHTML = newList;
 }
 
 function login(){
