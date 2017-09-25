@@ -331,7 +331,15 @@ function submitKick(){
 function getStatus(){
   getData('/lab/status', function(response){
     updatePage(response);
+    refocusCursor();
   });
+}
+
+function refocusCursor() {
+  console.log(!($("#registration").data('bs.modal') || {}).isShown);
+  if (!($("#registration").data('bs.modal') || {}).isShown) {
+    $('#idNumber').focus();
+  }
 }
 
 function updatePage(newStatus){
