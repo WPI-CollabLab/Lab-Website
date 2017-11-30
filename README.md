@@ -33,7 +33,7 @@ sudo service website start
   To use the site in a production setting, follow these steps (some commands may be debian centric and require conversion):
   1. Install dependencies:
     ```
-    sudo apt install nodejs redis npm
+    sudo apt install nodejs redis-server npm
     sudo npm install -g forever
     ```
 
