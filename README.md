@@ -69,10 +69,10 @@ sudo service website start
   To setup for development, the steps are slightly more straighforward.
 
   1. Install dependencies:
-    ```
+    
     sudo apt install nodejs redis npm
     sudo npm install -g nodemon
-    ```
+    
 
   2. Clone the repository into some directory:
     `git clone git@github.com:nileshp87/collablab.git`
