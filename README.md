@@ -63,7 +63,7 @@ sudo service website start
 
   7. Start with ForeverJS
 
-    `forever start index.js`
+    forever start index.js
 
 ## Development Usage
   To setup for development, the steps are slightly more straighforward.
