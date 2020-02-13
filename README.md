@@ -1,8 +1,8 @@
-#WPI Collablab Internal Website
-##Description
+# WPI Collablab Internal Website
+## Description
 This site allows users to swipe in and out of the lab, and view the status of the lab from outside the lab. It is built using NodeJS/ExpressJS, and exposes an API that can be consumed by other applications.
 
-##Dependencies
+## Dependencies
 NodeJS - Runs the node code
 
 npm - To grab all of the necessary node modules easily
@@ -17,7 +17,7 @@ NodeMon (Development)* - Will run script until crash, and then wait for file cha
 
 \* Are recommended packages, they make things easier for their environment.
 
-##Production Usage
+## Production Usage
   To use the site in a production setting, follow these steps (some commands may be debian centric and require conversion):
   1. Install dependencies:
     ```
@@ -53,7 +53,7 @@ NodeMon (Development)* - Will run script until crash, and then wait for file cha
     
     `forever start index.js`
 
-##Development Usage
+## Development Usage
   To setup for development, the steps are slightly more straighforward.
   
   1. Install dependencies:
