@@ -1,5 +1,5 @@
 // The default admin Id. Change this to sysadmin or president's information
-var config = {};
+let config = {};
 config.adminId = "000000000";
 config.adminName = "Admin";
 config.adminUsername = "admin";
