@@ -1,49 +1,50 @@
-var express = require('express');
-var config = require('./config');
+const express = require('express');
+const config = require('./config');
+const redis = require('redis')
 
-var userManagement = require('./userManagement');
-var users = require('./users');
-var lab = require('./lab');
-var manage = require('./manage');
-var session = require('express-session');
-var RedisStore = require('connect-redis')(session);
-var common = require('./common');
-var sites = {};
+const users = require('./users');
+const lab = require('./lab');
+const manage = require('./manage');
+const session = require('express-session');
+const redisClient = redis.createClient()
+const RedisStore = require('connect-redis')(session);
+const common = require('./common');
+const sites = {};
 
-var internal = express();
-var external = express();
+const internal = express();
+const external = express();
 
 internal.use(express.static('public'));
 external.use(express.static('public'));
 
-internal.set('view engine', 'jade');
-external.set('view engine', 'jade');
+internal.set('view engine', 'pug');
+external.set('view engine', 'pug');
 
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 internal.use(bodyParser.json());
 external.use(bodyParser.json());
 
 external.use(session({
-  store: new RedisStore(),
-  secret: config.cookieSecret,
-  resave: false,
-  saveUninitialized: false
+    store: new RedisStore({client: redisClient}),
+    secret: config.cookieSecret,
+    resave: false,
+    saveUninitialized: false
 }));
 
-internal.get('/schedule', function(req, res){
-  res.render('schedule');
+internal.get('/schedule', function (req, res) {
+    res.render('schedule');
 });
 
-internal.get('/', function(req, res){
+internal.get('/', function (req, res) {
     res.render('internalIndex');
 });
 
-external.get('/schedule', function(req, res){
-  res.render('schedule');
+external.get('/schedule', function (req, res) {
+    res.render('schedule');
 });
 
-external.get('/', common.getLogin, function(req, res){
-    res.render('externalIndex',{'user':req.user});
+external.get('/', common.getLogin, function (req, res) {
+    res.render('externalIndex', {'user': req.user});
 });
 
 internal.use('/lab', lab.internal);
@@ -56,14 +57,14 @@ manage.setLab(lab.labActions);
 external.use('/manage', manage.routes);
 
 setup();
-internal.set('domain','localhost');
+internal.set('domain', 'localhost');
 sites.internal = internal.listen(config.internalPort);
 sites.external = external.listen(config.externalPort);
 
-function setup(){
-  if(config.nukeOnRestart){
-    common.resetDatabase();
-  }
+function setup() {
+    if (config.nukeOnRestart) {
+        common.resetDatabase();
+    }
 }
 
 

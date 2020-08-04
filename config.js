@@ -1,5 +1,5 @@
 // The default admin Id. Change this to sysadmin or president's information
-var config = {};
+let config = {};
 config.adminId = "000000000";
 config.adminName = "Admin";
 config.adminUsername = "admin";
@@ -10,7 +10,7 @@ config.failsBeforeLockout = 5;
 config.lockoutLength = 30; // in seconds
 config.nukeOnRestart = true; // debugging purposes
 config.usernameRegex = /^[\d\w]{4,}$/; // succeeds if match, allows letters, numbers, and underscores
-config.nameRegex = /^[a-zA-Z'-\s]*$/; // succeeds if match, allows letters and spaces
+config.nameRegex = /^[a-zA-Z'\s]*$/; // succeeds if match, allows letters and spaces
 
 config.labMonitorPassphrase = "labMonitor2015";
 config.execPassphrase = "execsAreExecs";
