@@ -31,8 +31,8 @@ doctype html
 html(lang=en)
     head
         title WPI Collablab - #{title}
-        link(href='css/bootstrap.css', integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u', crossorigin='anonymous', rel='stylesheet')
-        link(href='css/bootstrap-theme.css', integrity='sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp', crossorigin='anonymous', rel='stylesheet')
+        link(href='/css/bootstrap.css', integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u', crossorigin='anonymous', rel='stylesheet')
+        link(href='/css/bootstrap-theme.css', integrity='sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp', crossorigin='anonymous', rel='stylesheet')
     body
         .container
             .col-md-10.col-md-offset-1
@@ -134,8 +134,8 @@ html(lang=en)
                         +form
                             +password('Passphrase', 'Enter the passphrase', 'passphrase')
                             +button('Submit Passphrase', 'sendPassphrase()')
-        script(src='js/jquery.js', integrity='sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=', crossorigin='anonymous')
-        script(src='js/bootstrap.js', integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymous')
+        script(src='/js/jquery.js', integrity='sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=', crossorigin='anonymous')
+        script(src='/js/bootstrap.js', integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymous')
         script(src='/js/notify.js')
         script(src='/js/common.js')
         script(src='/js/home.js')

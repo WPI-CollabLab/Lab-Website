@@ -30,7 +30,7 @@ function isValidUsername(username){
 }
 
 function isValidName(str) {
-    const regex = /^[a-zA-Z'\s]*$/;
+    const regex = /^[a-zA-Z'\-\s]*$/;
   return regex.test(str) && str.length < 31;
 }
 

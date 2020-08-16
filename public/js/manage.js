@@ -15,6 +15,10 @@ function cancelLogin() {
   window.location.replace('/');
 }
 
+function cancelLogin() {
+    window.location.replace('/');
+}
+
 function login() {
     let idNumber = $("#idNumber").val().trim();
     let password = $("#password").val().trim();
