@@ -8,11 +8,31 @@ const manage = require('./manage');
 const session = require('express-session');
 const redisClient = redis.createClient()
 const RedisStore = require('connect-redis')(session);
+import {createConnection} from "typeorm";
+import {Swipe} from "./models/swipe"
+import {User} from "./models/user"
 const common = require('./common');
 const sites = {};
 
 const internal = express();
 const external = express();
+
+// createConnection({
+//     type: "pg",
+//     host: "localhost",
+//     port: 5432,
+//     username: "test",
+//     password: "test",
+//     database: "test",
+//     entities: [
+//         Swipe,
+//         User,
+//     ],
+//     synchronize: true,
+//     logging: false
+// }).then(connection => {
+//
+// }).catch(error => console.log(error));
 
 internal.use(express.static('public'));
 external.use(express.static('public'));
@@ -66,6 +86,5 @@ function setup() {
         common.resetDatabase();
     }
 }
-
 
 module.exports = sites;

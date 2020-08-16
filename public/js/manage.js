@@ -12,6 +12,10 @@ passwordModal.on('shown.bs.modal', function () {
     $('#currentPassword').focus();
 });
 
+function cancelLogin() {
+    window.location.replace('/');
+}
+
 function login() {
     let idNumber = $("#idNumber").val().trim();
     let password = $("#password").val().trim();
