@@ -8,9 +8,6 @@ const manage = require('./manage');
 const session = require('express-session');
 const redisClient = redis.createClient()
 const RedisStore = require('connect-redis')(session);
-import {createConnection} from "typeorm";
-import {Swipe} from "./models/swipe"
-import {User} from "./models/user"
 const common = require('./common');
 const sites = {};
 

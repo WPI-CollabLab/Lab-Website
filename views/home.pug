@@ -115,6 +115,13 @@ html(lang=en)
                             br
                             +text('Username or ID Number', "Enter the user's identifier to reset their password", 'resetPasswordID')
                             +button('Reset User Password','resetPassword()')
+                    h3
+                    .panel.panel-primary
+                        .panel-heading Who was in the lab?
+                        .panel-body
+                            h4
+                                ul.list-group
+                                    div(id='who')
             if user.admin === true
                 #admin.col-md-8.col-md-offset-2.hidden
                     br
