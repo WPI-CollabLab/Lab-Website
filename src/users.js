@@ -1,32 +1,31 @@
-const express = require('express');
-const router = express.Router();
+import {Router} from "express";
+export let router = Router();
 
-const userManagement = require('./userManagement');
-const common = require('./common');
-const config = require('./config');
+import * as userManagement from './userManagement';
+import * as common from './common';
 
-router.post('/changePassword', common.authInRequest, function (req, res) {
+router.post('/changePassword',common.authInRequest, async (req, res) => {
     if (req.body.newPassword != null && req.body.newPassword.length > 4) {
-        userManagement.setPassword(req.user.idNumber, req.body.newPassword);
+        await userManagement.setPassword(req.user.idNumber, req.body.newPassword);
         res.send('0').end();
     } else {
         res.end();
     }
 });
 
-router.post('/login', common.authInRequest, function (req, res) {
-    req.session.idNumber = req.user.idNumber;
+router.post('/login',common.authInRequest, (req, res) => {
+    req.session.idNumber = req.user;
     req.session.save(function () {
         res.send('0').end();
     });
 });
 
-router.post('/logout', common.loggedIn, function (req, res) {
+router.post('/logout',common.loggedIn, (req, res) => {
     req.session.idNumber = null;
     res.send('0').end();
 });
 
-router.post('/register', function (req, res) {
+router.post('/register', async (req, res) => {
     const name = req.body.name;
     const username = req.body.username;
     const idNumber = req.body.newId;
@@ -36,13 +35,12 @@ router.post('/register', function (req, res) {
     if (!(common.isValidId(idNumber) && common.isValidUsername(username) &&
         common.isValidName(name) && password.length > 4)) {
         res.end();
-        return;
     }
     if (passphrase !== '' && common.passphraseIsValid(passphrase)) {
-        userManagement.createUser(idNumber, username, name, password,
+        await userManagement.createUser(idNumber, username, name, password,
             passphrase === config.labMonitorPassphrase,
             passphrase === config.execPassphrase,
-            passphrase === config.adminPassphrase,
+            passphrase === config.adminPassphrase).then(
             function () {
                 res.send('0').end();
             }, function (error) {
@@ -52,16 +50,14 @@ router.post('/register', function (req, res) {
                     res.send('1').end();
                 }
             });
-        return;
     } else if (passphrase !== '' && !common.passphraseIsValid(passphrase)) {
         res.send('4').end();
-        return;
     }
 
     if (common.isValidId(approverId)) {
-        userManagement.getUser(approverId, function (approver) {
-            if (approver.labMonitor === 'true') {
-                userManagement.createUser(idNumber, username, name, password, false, false, false,
+        await userManagement.getUser(approverId).then( async (approver) => {
+            if (approver !== undefined && approver.labMonitor === true) {
+                return userManagement.createUser(idNumber, username, name, password, false, false, false).then(
                     function () {
                         res.send('0').end();
                     }, function (error) {
@@ -72,11 +68,9 @@ router.post('/register', function (req, res) {
                         }
                     });
             }
+            res.send('2').end();
         }, function () {
             res.send('2').end();
         });
     }
 });
-
-
-module.exports = router;

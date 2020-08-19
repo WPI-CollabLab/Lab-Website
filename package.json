@@ -2,10 +2,11 @@
   "name": "collablab",
   "version": "1.0.1",
   "description": "Collablab Website",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "mocha",
-    "dev": "nodemon index.js"
+    "test": "mocha --exit --register @babel/register --register @babel/polyfill src/test/lab.js",
+    "dev": "nodemon --exec node -r @babel/register -r @babel/polyfill src/index.js",
+    "start": "node -r @babel/register -r @babel/polyfill src/index.js"
   },
   "author": "Nilesh Patel",
   "license": "ISC",
@@ -14,20 +15,34 @@
     "url": "https://github.com/nileshp87/collablab.git"
   },
   "dependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-transform-flow-strip-types": "^7.10.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-decorators": "^7.10.5",
+    "@babel/preset-env": "^7.10.5",
     "body-parser": "^1.19.0",
     "connect-redis": "^5.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "pg": "^8.3.0",
     "pug": "^3.0.0",
     "redis": "^3.0.2",
-    "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.25"
   },
   "devDependencies": {
+    "@babel/node": "^7.10.5",
+    "@babel/polyfill": "^7.10.4",
+    "@babel/register": "^7.10.5",
+    "chai": "^4.2.0",
     "mocha": "~8.1.1",
+    "nyc": "^15.1.0",
+    "really-need": "~1.9.2",
     "should": "~13.2.3",
     "supertest": "~4.0.2",
-    "really-need": "~1.9.2"
+    "supertest-session": "^4.0.0",
+    "cross-env": "^7.0.2",
+    "babel-plugin-istanbul": "^6.0.0"
   }
 }

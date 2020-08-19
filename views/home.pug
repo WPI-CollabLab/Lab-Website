@@ -52,16 +52,16 @@ html(lang=en)
                 ul.nav.nav-tabs.nav-justified
                     li.active(id='selfTab' role='presentation')
                         a(href="#" onClick="loadTab(0)") Yourself
-                    if user.labMonitor === 'true' || user.admin === 'true'
+                    if user.labMonitor === true || user.admin === true
                         li(id='lmTab' role='presentation')
                             a(href="#" onClick="loadTab(1)") Lab monitor
-                    if user.exec === 'true' || user.admin === 'true'
+                    if user.exec === true || user.admin === true
                         li(id='execTab' role='presentation')
                             a(href="#" onClick="loadTab(2)") Executive
-                    if user.admin === 'true'
+                    if user.admin === true
                         li(id='adminTab' role='presentation')
                             a(href="#" onClick="loadTab(3)") Administrator
-                    if (user.labMonitor !== 'true' || user.exec !== 'true') && user.admin !== 'true'
+                    if (user.labMonitor !== true || user.exec !== true) && user.admin !== true
                         li(id='grantTab' role='presentation')
                             a(href='#' onClick='loadTab(4)')  Get Privileges
             #self.col-md-8.col-md-offset-2
@@ -88,16 +88,16 @@ html(lang=en)
                     +form
                         +password('Password', 'Enter your password to confirm action', 'password')
                         +button('Delete Account', 'deleteAccount()')
-            if (user.labMonitor === 'true' || user.admin === 'true')
+            if (user.labMonitor === true || user.admin === true)
                 #lm.col-md-8.col-md-offset-2.hidden
                     br
                     +panel('Close Lab')
                         +form
                             +button('Close Lab', 'closeLab()')
-            if (user.exec === 'true' || user.admin === 'true')
+            if (user.exec === true || user.admin === true)
                 #exec.col-md-8.col-md-offset-2.hidden
                     br
-                    if user.labMonitor !== 'true'
+                    if user.labMonitor !== true
                         +panel('Close Lab')
                             +form
                                 +button('Close Lab', 'closeLab()')
@@ -115,7 +115,7 @@ html(lang=en)
                             br
                             +text('Username or ID Number', "Enter the user's identifier to reset their password", 'resetPasswordID')
                             +button('Reset User Password','resetPassword()')
-            if user.admin === 'true'
+            if user.admin === true
                 #admin.col-md-8.col-md-offset-2.hidden
                     br
                     +panel('Grant Exec', 'grantExec')
@@ -127,7 +127,7 @@ html(lang=en)
                             +password('Enter Your Password', 'Enter password', 'dumpPassword')
                             +password('Re-Enter Your Password', 'Re-enter your password', 'confirmDumpPassword')
                             +button('Reset Database', 'resetDatabase()')
-            if (user.labMonitor !== 'true' || user.exec !== 'true') && user.admin !== 'true'
+            if (user.labMonitor !== true || user.exec !== true) && user.admin !== true
                 #grant.col-md-8.col-md-offset-2.hidden
                     br
                     +panel('Enter a Passphrase')
