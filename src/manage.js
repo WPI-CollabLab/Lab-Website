@@ -171,7 +171,7 @@ router.post('/grant', common.loggedIn, async (req, res) => {
 router.post('/resetDatabase', common.loggedIn, async (req, res) => {
     const password = req.body.password;
     const user = await userManagement.getUser(req.user);
-    if (!password || password.length < 5 || user.admin !== true) {
+    if (!password || password.length < 5 || user === undefined || user.admin !== true) {
         res.end();
         return;
     }

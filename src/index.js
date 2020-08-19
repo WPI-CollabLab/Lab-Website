@@ -12,18 +12,18 @@ import {User} from "./models/user";
 import {Swipe} from "./models/swipe";
 const sites = {};
 
+//when running unit tests connection is already created there.
 if(!getConnectionManager().has("default")) {
-
     createConnection().then(async (connection) => {
         User.useConnection(connection);
         Swipe.useConnection(connection);
         if (config.nukeOnRestart) {
             await common.resetDatabase();
         }
-
     });
 }
 
+//redis still needed for cookie store.
 const redisClient = redis.createClient();
 let RedisStore = require('connect-redis')(session);
 

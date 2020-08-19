@@ -86,8 +86,8 @@ function closeLab() {
 }
 
 function sendPassphrase() {
-    var passphrase = $('#passphrase').val();
-    var data = {'passphrase': passphrase};
+    let passphrase = $('#passphrase').val();
+    let data = {'passphrase': passphrase};
     postData('/manage/getPermission', JSON.stringify(data), function (statusCode) {
         switch (statusCode) {
             case 0:
@@ -104,8 +104,8 @@ function sendPassphrase() {
 }
 
 function changeName() {
-    var name = $('#newName').val();
-    var data = {'name': name};
+    let name = $('#newName').val();
+    let data = {'name': name};
     if (!isValidName(name)) {
         addError('newName', 'Invalid name, must only be letters and spaces.');
         return false;
@@ -124,10 +124,13 @@ function changeName() {
 }
 
 function changePassword() {
-    var oldPass = $('#oldPassword').val();
-    var newPass = $('#newPassword').val();
-    var conPass = $('#confirmPassword').val();
-    var error = false;
+    let newPassword = $('#newPassword');
+    let oldPassword = $('#oldPassword');
+    let confirmPassword = $('#confirmPassword');
+    let oldPass = oldPassword.val();
+    let newPass = newPassword.val();
+    let conPass = confirmPassword.val();
+    let error = false;
     if (oldPass.trim() === '') {
         addError('oldPassword', 'You need to fill out your current password');
         error = true;
@@ -138,31 +141,31 @@ function changePassword() {
     }
     if (newPass !== conPass) {
         addError('confirmPassword', 'Your passwords do not match!');
-        $('#newPassword').val('');
-        $('#confirmPassword').val('');
+        newPassword.val('');
+        confirmPassword.val('');
         error = true;
     }
     if (!error) {
-        var data = {'password': oldPass, 'newPassword': newPass};
+        let data = {'password': oldPass, 'newPassword': newPass};
         postData('/manage/changePassword', JSON.stringify(data), function (statusCode) {
             switch (statusCode) {
                 case 0:
                     success('confirmPassword', 'Your password has been updated successfully!');
-                    $('#newPassword').val('');
+                    newPassword.val('');
                     $('#confirmPassword').val('');
                     break;
                 case 1:
                     addError('oldPassword', 'Your old password was incorrect');
                     break;
             }
-            $('#oldPassword').val('');
+            oldPassword.val('');
         });
     }
 }
 
 function deleteAccount() {
-    var password = $('#password').val();
-    var data = {'password': password};
+    let password = $('#password').val();
+    let data = {'password': password};
     if (password.trim() === '') {
         addError('password', 'You need to fill out this before you can delete your account.');
         return;
@@ -182,12 +185,12 @@ function deleteAccount() {
 }
 
 function deleteUser() {
-    var userID = $('#toDelete').val().trim();
+    let userID = $('#toDelete').val().trim();
     if (userID === '') {
         addError('toDelete', 'You need to enter another user\'s identifier.');
         return;
     }
-    var data = {'userID': userID};
+    let data = {'userID': userID};
     postData('/manage/deleteAccount', JSON.stringify(data), function (statusCode) {
         switch (statusCode) {
             case 0:
@@ -202,7 +205,7 @@ function deleteUser() {
 }
 
 function grantLabMonitor() {
-    var userID = $('#grantLMID').val().trim();
+    let userID = $('#grantLMID').val().trim();
     if (userID === '') {
         addError('grantLMID', 'You need to enter another user\'s identifier.');
         return;
@@ -247,7 +250,7 @@ function resetPassword() {
         addError('resetPasswordID', 'You need to enter another user\'s identifier.');
         return;
     }
-    var data = {'userID': userID};
+    let data = {'userID': userID};
     postData('/manage/resetPassword', JSON.stringify(data), function (statusCode) {
         switch (statusCode) {
             case 0:
@@ -262,20 +265,22 @@ function resetPassword() {
 }
 
 function resetDatabase() {
-    var password = $('#dumpPassword').val().trim();
-    var confirmPassword = $('#confirmDumpPassword').val().trim();
+    let dumpPassword = $('#dumpPassword');
+    let confirmDumpPassword = $('#confirmDumpPassword');
+    let password = dumpPassword.val().trim();
+    let confirmPassword = confirmDumpPassword.val().trim();
     if (password === '') {
         addError('dumpPassword', 'You need to enter a password');
         return false;
     }
     if (confirmPassword !== password) {
         addError('dumpPassword', 'Your passwords do not match');
-        $('#confirmDumpPassword').val('');
-        $('#dumpPassword').focus();
+        confirmDumpPassword.val('');
+        dumpPassword.focus();
         return false;
     }
     if (confirm('This action will destroy the *entire* database, users, logs, EVERYTHING. Are you sure you want to do this?')) {
-        data = {'password': password};
+        let data = {'password': password};
         postData('/manage/resetDatabase', JSON.stringify(data), function (statusCode) {
             switch (statusCode) {
                 case 0:
@@ -284,14 +289,14 @@ function resetDatabase() {
                     break;
                 case 1:
                     addError('dumpPassword', 'Your passwords were incorrect!');
-                    $('#confirmDumpPassword').val('');
-                    $('#dumpPassword').focus();
+                    confirmDumpPassword.val('');
+                    dumpPassword.focus();
                     break;
             }
         });
     } else {
-        $('#dumpPassword').val('');
-        $('#confirmDumpPassword').val('');
+        dumpPassword.val('');
+        confirmDumpPassword.val('');
     }
 
 

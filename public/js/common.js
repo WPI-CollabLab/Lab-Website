@@ -26,12 +26,12 @@ function isValidId(idNumber){
 
 function isValidUsername(username){
     const regex = /^[\d\w]{4,30}$/;
-  return username != null && regex.test(username);
+    return username != null && regex.test(username);
 }
 
 function isValidName(str) {
     const regex = /^[a-zA-Z'\-\s]*$/;
-  return regex.test(str) && str.length < 31;
+    return regex.test(str) && str.length < 31;
 }
 
 function isValidNickname(nickname){
@@ -44,9 +44,9 @@ function addError(idName, error, leave) {
     idsel.notify(error, {className: 'error', elementPosition: 'right middle', autoHideDelay: 2000});
     idsel.focus();
     $('#'+idName + 'Group').addClass('has-error');
-  if(!leave){
-    idsel.val('');
-  }
+    if(!leave){
+        idsel.val('');
+    }
 }
 
 function convertSwipe(idNumber){
@@ -57,8 +57,8 @@ function convertSwipe(idNumber){
     return '';
   }
   if(idNumber[0] === '%'){
-    var id = idNumber.match(/[\d]{9}/);
-    if(id.length > 0){
+      const id = idNumber.match(/[\d]{9}/);
+      if(id.length > 0){
       return id[0];
     }
   }

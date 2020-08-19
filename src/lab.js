@@ -5,6 +5,7 @@ const external = express.Router();
 
 import * as userManagement from './userManagement'
 import * as common from './common'
+import {Swipe} from "./models/swipe";
 
 let labStatus = {
     open: false,
@@ -24,7 +25,7 @@ external.get('/status', function (req, res) {
 lab.post('/close',common.authInRequest, async (req, res) => {
     let user = await userManagement.getUser(req.user);
     if (user.labMonitor === true) {
-        closeLab();
+        await closeLab();
         res.send('0').end();
     } else {
         res.end();
@@ -49,10 +50,11 @@ external.post('/kick',common.loggedIn, async (req, res) => {
     });
 });
 
-function closeLab() {
+async function closeLab() {
     labStatus.open = false;
-    labStatus.members = {};
-    names = {};
+    for(const user of Object.values(labStatus.members)) {
+        await swipeOut(user);
+    }
 }
 
 async function updateList()  {
@@ -74,11 +76,11 @@ async function processSwipe(user, res) {
         if (user.needsPassword === true) {
             res.send("4").end();
         }
-        swipeIn(user);
+        await swipeIn(user);
     } else {
         const numLabMonitors = countLabMonitorsInLab();
         if (numLabMonitors > 1 || user.labMonitor === false || Object.keys(names).length === 1) {
-            swipeOut(user)
+            await swipeOut(user)
         } else {
             res.send("3").end();
             return;
@@ -88,10 +90,15 @@ async function processSwipe(user, res) {
     labStatus.open = countLabMonitorsInLab() > 0;
 }
 
-function swipeIn(user) {
+async function swipeIn(user) {
     labStatus.members[user.idNumber] = user;
     labStatus.open = true;
     names[user.username] = toDisp(user);
+    let swipeIn = new Swipe();
+    swipeIn.user = user;
+    swipeIn.time = Date.now();
+    swipeIn.direction = "in";
+    await swipeIn.save();
 }
 
 function toDisp(user) {
@@ -101,9 +108,14 @@ function toDisp(user) {
     return user.name;
 }
 
-function swipeOut(user) {
+async function swipeOut(user) {
     delete labStatus.members[user.idNumber];
     delete names[user.username];
+    let swipeOut = new Swipe();
+    swipeOut.user = user;
+    swipeOut.time = Date.now();
+    swipeOut.direction = "out";
+    await swipeOut.save();
 }
 
 function countLabMonitorsInLab() {

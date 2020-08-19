@@ -8,6 +8,8 @@ let closeModal = $('#closeModal');
 let kickModal = $('#kickModal');
 let passwordModal = $('#passwordModal');
 let currentPassword = $('#currentPassword');
+let approval = $('#approval');
+let userIDNumber = $('#userIdNumber');
 
 registration.on('shown.bs.modal', function () {
     $('#name').focus();
@@ -16,8 +18,8 @@ registration.on('shown.bs.modal', function () {
 registration.on('hidden.bs.modal', function () {
     $('#idNumber').focus();
     $('#name').val('');
-    $('#userIdNumber').val('');
-    $('#approval').val('');
+    userIDNumber.val('');
+    approval.val('');
     $('#passphrase').val('');
     $('#username').val('');
     $("#passwordRegistration").val('');
@@ -67,8 +69,8 @@ function showNeedsPassword(idNumber) {
 }
 
 function submitLogin() {
-    var idNumber = document.getElementById('idNumber').value;
-    var convertedId = convertSwipe(idNumber);
+    let idNumber = document.getElementById('idNumber').value;
+    let convertedId = convertSwipe(idNumber);
     document.getElementById('idNumber').value = '';
     if (!isValidId(convertedId) && !isValidUsername(idNumber)) {
         showMessage('Please try again!', 3000, 'error');
@@ -84,7 +86,7 @@ function submitLogin() {
 }
 
 function swipe(idNumber) {
-    var data = JSON.stringify({'idNumber': idNumber});
+    const data = JSON.stringify({'idNumber': idNumber});
     postData('/lab/swipe', data,
         function (statusCode) {
             switch (statusCode) {
@@ -163,20 +165,22 @@ function cancelRegistration() {
 }
 
 function submitRegistration(){
-  var name = $('#name').val().trim();
-  var newId = convertSwipe($('#userIdNumber').val().trim());
-  var approval = convertSwipe($('#approval').val().trim());
-  var username = $('#username').val().trim();
-  var passphrase = $('#passphrase').val().trim();
-  var password = $('#passwordRegistration').val().trim();
-  var confirmPassword = $('#confirmPasswordRegistration').val().trim();
+    let passwordRegistration = $('#passwordRegistration');
+    let confirmPasswordRegistration = $('#confirmPasswordRegistration');
+    let name = $('#name').val().trim();
+    let newId = convertSwipe(userIDNumber.val().trim());
+    let approver = convertSwipe(approval.val().trim());
+    let username = $('#username').val().trim();
+    let passphrase = $('#passphrase').val().trim();
+    let password = passwordRegistration.val().trim();
+    let confirmPassword = confirmPasswordRegistration.val().trim();
 
     if (isValidId(newId)) {
-        $('#userIdNumber').val(newId);
+        userIDNumber.val(newId);
     }
 
-    if (isValidId(approval)) {
-        $('#approval').val(approval);
+    if (isValidId(approver)) {
+        approval.val(approver);
     }
 
     if (name === '') {
@@ -186,8 +190,8 @@ function submitRegistration(){
 
     if (!isNaN(name)) {
         if (name !== newId && name.length === 9) {
-            $('#approval').val(name);
-            $('#approval').notify('Moved ID Here!', {
+            approval.val(name);
+            approval.notify('Moved ID Here!', {
                 className: 'success',
                 elementPosition: 'right middle',
                 autoHideDelay: 1000
@@ -203,7 +207,7 @@ function submitRegistration(){
     }
 
     if (newId === '') {
-        $('#userIdNumber').focus();
+        userIDNumber.focus();
         return false;
     }
 
@@ -214,7 +218,7 @@ function submitRegistration(){
 
 
     if (password === '' && confirmPassword === '') {
-        $('#passwordRegistration').focus();
+        passwordRegistration.focus();
         return false;
     }
 
@@ -226,18 +230,18 @@ function submitRegistration(){
 
     if (password.length < 5) {
         addError('passwordRegistration', 'Must be at least five characters long!');
-        $('#confirmPasswordRegistration').val('');
+        confirmPasswordRegistration.val('');
         return false;
     }
 
     if (passphrase === '') {
-        if (approval === '') {
-            $('#approval').focus();
+        if (approver === '') {
+            approval.focus();
             return false;
         }
     }
 
-    if ((approval.length !== 9 || isNaN(parseInt(approval))) && passphrase === '') {
+    if ((approver.length !== 9 || isNaN(parseInt(approver))) && passphrase === '') {
         addError('approval', 'Invalid swipe, try again!');
         return false;
     }
@@ -251,10 +255,10 @@ function submitRegistration(){
         return false;
     }
 
-    data = JSON.stringify({
+    let data = JSON.stringify({
         'newId': newId,
         'name': name,
-        'approverId': approval,
+        'approverId': approver,
         'username': username,
         'passphrase': passphrase,
         'password': password
@@ -292,10 +296,12 @@ function submitRegistration(){
 }
 
 function changePassword() {
-    var oldPassword = currentPassword.val().trim();
-    var newPassword = $('#newPassword').val().trim();
-    var repeat = $('#repeatPassword').val().trim();
-    var idNumber = $('#hiddenId').val().trim();
+    let newPass = $('#newPassword');
+    let repPass = $('#repeatPassword');
+    let oldPassword = currentPassword.val().trim();
+    let newPassword = newPass.val().trim();
+    let repeat = repPass.val().trim();
+    let idNumber = $('#hiddenId').val().trim();
 
     if (oldPassword === "") {
         currentPassword.notify('Passwords field blank!', {className: 'error', elementPosition: 'right'});
@@ -304,14 +310,14 @@ function changePassword() {
         return;
     }
     if (newPassword === "") {
-        $('#newPassword').notify('Passwords field blank!', {className: 'error', elementPosition: 'right'});
-        $('#newPassword').focus();
+        newPass.notify('Passwords field blank!', {className: 'error', elementPosition: 'right'});
+        newPass.focus();
         $('#newPasswordGroup').addClass('has-error');
         return;
     }
     if (repeat === "" || repeat !== newPassword) {
-        $('#repeatPassword').notify('Passwords do not match!', {className: 'error', elementPosition: 'right'});
-        $('#repeatPassword').focus();
+        repPass.notify('Passwords do not match!', {className: 'error', elementPosition: 'right'});
+        repPass.focus();
         $('#repeatPasswordGroup').addClass('has-error');
         return;
     }
@@ -320,9 +326,9 @@ function changePassword() {
     }
     if (newPassword.length < 5) {
         addError('newPassword', 'Password must be at least five characters long!');
-        $('#repeatPassword').val('');
+        repPass.val('');
     }
-    var data = {'password': oldPassword, 'newPassword': newPassword, 'idNumber': idNumber};
+    let data = {'password': oldPassword, 'newPassword': newPassword, 'idNumber': idNumber};
 
     postData('/users/changePassword', JSON.stringify(data), function (statusCode) {
         switch (statusCode) {
@@ -337,10 +343,11 @@ function changePassword() {
 }
 
 function kickRemaining() {
-    const password = $("#password").val().trim();
+    let passwordBox = $("#password");
+    const password = passwordBox.val().trim();
     const id = $("#hiddenId").val();
     if (password === "") {
-        $("#password").focus();
+        passwordBox.focus();
         return false;
     }
     let data = {'password': password, 'idNumber': id};
@@ -368,7 +375,7 @@ function kick(username) {
 }
 
 function submitKick() {
-    var login = $('#kickUser').val();
+    let login = $('#kickUser').val();
     swipe(login);
 }
 
@@ -398,11 +405,11 @@ function updatePage(newStatus) {
         isOpen.addClass('text-danger');
     }
     let newList = '';
-    for (let index in newStatus.members) {
+    for (let index of newStatus.members) {
         if (internal) {
-            newList += "<button class=\"list-group-item\" onClick=\"kick('" + index + "')\">" + newStatus.members[index] + "</button>";
+            newList += `<button class="list-group-item" onClick="kick('${index}')">${newStatus.members[index]}</button>`;
         } else {
-            newList += "<li class=\"list-group-item\">" + newStatus.members[index] + '</li>';
+            newList += `<li class="list-group-item">${newStatus.members[index]}</li>`;
         }
     }
     labStatus = newStatus;
