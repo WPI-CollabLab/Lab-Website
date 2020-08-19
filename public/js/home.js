@@ -38,7 +38,6 @@ function show(tab) {
 }
 
 function changeUsername() {
-    console.log('test');
     const username = $('#newUsername').val();
     if (!isValidUsername(username)) {
         addError('newUsername', 'Invalid username, must be alphanumeric, spaces between 4 and 30 characters!');

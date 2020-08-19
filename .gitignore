@@ -31,3 +31,5 @@ node_modules
 
 #IDE stuff
 .idea
+
+dist/

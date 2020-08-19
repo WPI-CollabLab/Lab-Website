@@ -49,7 +49,6 @@ function kickUser() {
     let idNumber = $('#idNumber').val();
     let data = {'idNumber': idNumber};
     postData('/lab/kick', JSON.stringify(data), function (statusCode) {
-        console.log(statusCode);
         switch (statusCode) {
             case 0:
                 $.notify("Kick Successful!", {'className': 'success'});

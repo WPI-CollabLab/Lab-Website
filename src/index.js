@@ -59,7 +59,7 @@ internal.get('/about', function(req, res){
   res.render('about');
 });
 
-internal.get('/', function (req, res){
+internal.get('/', function (req, res) {
     res.render('internalIndex');
 });
 
