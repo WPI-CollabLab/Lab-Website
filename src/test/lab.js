@@ -103,7 +103,7 @@ describe('Endpoint', () => {
             before(async () => {
                 return intSession
                     .post('/lab/swipe')
-                    .send(swipeData)
+                    .send({idNumber: config.adminUsername})
                     .end(function (err, res) {
                         expect(res.text).to.equal('0');
                         return intSession
@@ -163,12 +163,9 @@ describe('Endpoint', () => {
         });
 
         it('New user can\'t swipe in, bc they arent a lab monitor yet.', (done) => {
-            const swipeData = {
-                idNumber: TEST_USER_ID
-            };
             intSession
                 .post('/lab/swipe')
-                .send(swipeData)
+                .send({idNumber: TEST_USER_ID})
                 .end(function (err, res) {
                     expect(res.text).to.equal('1');
                     return intSession
@@ -192,12 +189,9 @@ describe('Endpoint', () => {
         });
 
         it('New user can swipe in, bc they just got promoted to lab monitor.', (done) => {
-            const swipeData = {
-                idNumber: TEST_USER_ID
-            };
             intSession
                 .post('/lab/swipe')
-                .send(swipeData)
+                .send({idNumber: TEST_USER_ID})
                 .end(function (err, res) {
                     expect(res.text).to.equal('0');
                     return intSession
