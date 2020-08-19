@@ -1,35 +1,34 @@
-const express = require('express');
-const config = require('./config');
-const redis = require('redis')
+import express from "express";
+import session from "express-session";
+import redis from "redis";
+import {createConnection,getConnectionManager} from 'typeorm'
 
-const users = require('./users');
-const lab = require('./lab');
-const manage = require('./manage');
-const session = require('express-session');
-const redisClient = redis.createClient()
-const RedisStore = require('connect-redis')(session);
-const common = require('./common');
+import * as config from './config'
+import * as users from './users'
+import * as lab from './lab'
+import * as manage from './manage'
+import * as common from './common'
+import {User} from "./models/user";
+import {Swipe} from "./models/swipe";
 const sites = {};
+
+if(!getConnectionManager().has("default")) {
+
+    createConnection().then(async (connection) => {
+        User.useConnection(connection);
+        Swipe.useConnection(connection);
+        if (config.nukeOnRestart) {
+            await common.resetDatabase();
+        }
+
+    });
+}
+
+const redisClient = redis.createClient();
+let RedisStore = require('connect-redis')(session);
 
 const internal = express();
 const external = express();
-
-// createConnection({
-//     type: "pg",
-//     host: "localhost",
-//     port: 5432,
-//     username: "test",
-//     password: "test",
-//     database: "test",
-//     entities: [
-//         Swipe,
-//         User,
-//     ],
-//     synchronize: true,
-//     logging: false
-// }).then(connection => {
-//
-// }).catch(error => console.log(error));
 
 internal.use(express.static('public'));
 external.use(express.static('public'));
