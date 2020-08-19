@@ -4,7 +4,7 @@
   "description": "Collablab Website",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --exit --register @babel/register --register @babel/polyfill src/test/lab.js",
+    "test": "mocha --exit --require @babel/register --require @babel/polyfill src/test/lab.js",
     "dev": "nodemon --exec node -r @babel/register -r @babel/polyfill src/index.js",
     "start": "node -r @babel/register -r @babel/polyfill src/index.js"
   },
