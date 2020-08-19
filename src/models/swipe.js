@@ -5,7 +5,7 @@ import {User} from "./user";
 export class Swipe extends BaseEntity {
 
     @PrimaryGeneratedColumn("numeric")
-    id = 0;
+    id = undefined;
 
     @Column("text")
     time = "";
@@ -13,6 +13,6 @@ export class Swipe extends BaseEntity {
     @Column("text")
     direction = "";
 
-    @ManyToOne(type => User, user => user.idNumber)
+    @ManyToOne(type => User, user => user.idNumber,{onDelete:'CASCADE'})
     user = undefined;
 }

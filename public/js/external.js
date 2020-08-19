@@ -27,11 +27,11 @@ function updatePage(newStatus) {
         isopen.addClass('text-danger');
     }
     let newList = '';
-        for (let index in newStatus.members) {
+        for (let index of newStatus.members) {
           if (kicking) {
-            newList += "<button class=\"list-group-item\" onClick=\"kick('" + index + "')\">" + newStatus.members[index] + "</button>";
+            newList += `<button class="list-group-item" onClick="kick('${index}')">${newStatus.members[index]}</button>`;
           } else {
-            newList += "<li class=\"list-group-item\">" + newStatus.members[index] + '</li>';
+            newList += `<li class="list-group-item">${newStatus.members[index]}</li>`;
 
           }
     }

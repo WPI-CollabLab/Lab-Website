@@ -1,16 +1,12 @@
 import {createConnection} from "typeorm";
-const request = require('supertest');
 import * as config from "../config"
-import * as lab from "../lab"
-import { expect } from "chai"
+import {expect} from "chai"
 import {User} from "../models/user";
 import {Swipe} from "../models/swipe";
 import * as common from "../common";
 import session from "supertest-session"
 
 describe('Endpoint', () => {
-    let intUrl = 'http://localhost:' + config.internalPort;
-    let extUrl = 'http://localhost:' + config.externalPort;
     let site;
     let extSession;
     let intSession;
@@ -42,14 +38,14 @@ describe('Endpoint', () => {
 
     describe('Lab Swiping', function () {
         it('Should allow admin user to swipe in w/ id number.', function (done) {
-            request(intUrl)
+            intSession
                 .post('/lab/swipe')
                 .send({idNumber: config.adminUsername})
                 .end(function (err, res) {
                     expect(res.text).to.equal('0');
-                    return request(intUrl)
+                    return intSession
                         .get('/lab/status')
-                        .end(function (err, res) {
+                        .end((err, res) => {
                             expect(res.body.open).to.equal(true);
                             expect(Object.keys(res.body.members).length).to.equal(1);
                             expect(res.body.members[config.adminUsername]).to.equal(config.adminName);
@@ -58,12 +54,12 @@ describe('Endpoint', () => {
                 });
         });
         it('Should allow admin user to swipe out w/ id number.', function (done) {
-            request(intUrl)
+            intSession
                 .post('/lab/swipe')
                 .send({idNumber: config.adminUsername})
                 .end(function (err, res) {
                     expect(res.text).to.equal('0');
-                    return request(intUrl)
+                    return intSession
                         .get('/lab/status')
                         .end(function (err, res) {
                             expect(res.body.open).to.equal(false);
@@ -78,7 +74,7 @@ describe('Endpoint', () => {
                 .send({idNumber: config.adminUsername})
                 .end(function (err, res) {
                     expect(res.text).to.equal('0');
-                    return request(intUrl)
+                    return intSession
                         .get('/lab/status')
                         .end(function (err, res) {
                             expect(res.body.open).to.equal(true);
@@ -105,12 +101,12 @@ describe('Endpoint', () => {
         });
         it('Should allow admin user to close lab from lab system.', function (done) {
             before(async () => {
-                return request(intUrl)
+                return intSession
                     .post('/lab/swipe')
                     .send(swipeData)
                     .end(function (err, res) {
                         expect(res.text).to.equal('0');
-                        return request(intUrl)
+                        return intSession
                             .get('/lab/status')
                             .end(function (err, res) {
                                 expect(res.body.open).to.equal(false);
@@ -129,7 +125,7 @@ describe('Endpoint', () => {
                 .send(closeData)
                 .end((err, res) => {
                     expect(res.text).to.equal('0');
-                    return request(intUrl)
+                    return intSession
                         .get('/lab/status')
                         .end(function (err, res) {
                             expect(res.body.open).to.equal(false);
@@ -167,15 +163,15 @@ describe('Endpoint', () => {
         });
 
         it('New user can\'t swipe in, bc they arent a lab monitor yet.', (done) => {
-            var swipeData = {
+            const swipeData = {
                 idNumber: TEST_USER_ID
             };
-            request(intUrl)
+            intSession
                 .post('/lab/swipe')
                 .send(swipeData)
                 .end(function (err, res) {
                     expect(res.text).to.equal('1');
-                    return request(intUrl)
+                    return intSession
                         .get('/lab/status')
                         .end(function (err, res) {
                             expect(res.body.open).to.equal(false);
@@ -196,15 +192,15 @@ describe('Endpoint', () => {
         });
 
         it('New user can swipe in, bc they just got promoted to lab monitor.', (done) => {
-            var swipeData = {
+            const swipeData = {
                 idNumber: TEST_USER_ID
             };
-            request(intUrl)
+            intSession
                 .post('/lab/swipe')
                 .send(swipeData)
                 .end(function (err, res) {
                     expect(res.text).to.equal('0');
-                    return request(intUrl)
+                    return intSession
                         .get('/lab/status')
                         .end(function (err, res) {
                             expect(res.body.open).to.equal(true);
