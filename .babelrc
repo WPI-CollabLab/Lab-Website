@@ -1,6 +1,9 @@
 {
   "presets": [
-    "@babel/preset-env"
+    ["@babel/preset-env", {
+      "useBuiltIns": "usage",
+      "corejs": 3
+    }]
   ],
   "plugins": [
     [
@@ -10,7 +13,15 @@
       }
     ],
     "@babel/plugin-proposal-class-properties",
-    "@babel/plugin-transform-flow-strip-types"
+    "@babel/plugin-transform-flow-strip-types",
+    ["@babel/plugin-transform-runtime",
+      {
+        "absoluteRuntime": false,
+        "corejs": 3,
+        "helpers": true,
+        "regenerator": true
+      }
+    ]
   ],
   "sourceMaps": "both",
   "env": {

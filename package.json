@@ -4,9 +4,9 @@
   "description": "Collablab Website",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --exit --require @babel/register --require @babel/polyfill src/test/lab.js",
-    "dev": "nodemon --exec node -r @babel/register -r @babel/polyfill src/index.js",
-    "start": "node -r @babel/register -r @babel/polyfill src/index.js"
+    "test": "mocha --exit --require @babel/register --require @babel/preset-env src/test/lab.js",
+    "dev": "nodemon --exec node-r @babel/register -r @babel/preset-env src/index.js",
+    "start": "node -r @babel/register -r @babel/preset-env src/index.js"
   },
   "author": "Nilesh Patel",
   "license": "ISC",
@@ -17,9 +17,11 @@
   "dependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
+    "@babel/runtime-corejs3": "^7.11.2",
     "@babel/plugin-transform-flow-strip-types": "^7.10.4",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-decorators": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.11.0",
     "@babel/preset-env": "^7.10.5",
     "body-parser": "^1.19.0",
     "connect-redis": "^5.0.0",
@@ -44,6 +46,7 @@
     "supertest-session": "^4.0.0",
     "cross-env": "^7.0.2",
     "babel-plugin-istanbul": "^6.0.0",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "core-js": "^3.6.5"
   }
 }

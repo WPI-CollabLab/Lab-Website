@@ -7,7 +7,9 @@ NodeJS - Runs the node code
 
 npm - To grab all of the necessary node modules easily
 
-Redis - Database backend
+Redis - Session Store
+
+postgres - Database backend
 
 ForeverJS (Production)* - Will continuously restart script on crash
 
@@ -33,7 +35,7 @@ sudo service website start
   To use the site in a production setting, follow these steps (some commands may be debian centric and require conversion):
   1. Install dependencies:
     ```
-    sudo apt install nodejs redis-server npm
+    sudo apt install nodejs redis-server npm postgresql
     sudo npm install -g forever
     ```
 
