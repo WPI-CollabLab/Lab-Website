@@ -175,7 +175,7 @@ router.post('/resetDatabase', common.loggedIn, async (req, res) => {
         res.end();
         return;
     }
-    await userManagement.correctCreds(req.user, password).then( async () => {
+    await userManagement.correctCreds(req.user.idNumber, password).then( async () => {
         await common.resetDatabase();
         res.send('0').end();
     }, () => {
