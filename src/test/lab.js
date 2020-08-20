@@ -3,7 +3,7 @@ import * as config from "../config"
 import {expect} from "chai"
 import {User} from "../models/user";
 import {Visit} from "../models/visit";
-import * as common from "../common";
+import {resetDatabase} from "../common";
 import session from "supertest-session"
 
 describe('Endpoint', () => {
@@ -21,7 +21,7 @@ describe('Endpoint', () => {
             User.useConnection(connection);
             Visit.useConnection(connection);
             if (config.nukeOnRestart) {
-                await common.resetDatabase();
+                await resetDatabase();
             }
 
         })
@@ -53,6 +53,7 @@ describe('Endpoint', () => {
                         });
                 });
         });
+
         it('Should allow admin user to swipe out w/ id number.', function (done) {
             intSession
                 .post('/lab/swipe')
@@ -68,6 +69,7 @@ describe('Endpoint', () => {
                         });
                 });
         });
+
         it('Should allow admin user to swipe in w/ username.', function (done) {
             intSession
                 .post('/lab/swipe')
@@ -84,6 +86,7 @@ describe('Endpoint', () => {
                         });
                 });
         });
+
         it('Should allow admin user to swipe out w/ username.', function (done) {
             intSession
                 .post('/lab/swipe')
@@ -99,6 +102,7 @@ describe('Endpoint', () => {
                         });
                 })
         });
+
         it('Should allow admin user to close lab from lab system.', function (done) {
             before(async () => {
                 return intSession
@@ -155,14 +159,14 @@ describe('Endpoint', () => {
         it('Can login as new user.', (done) => {
             extSession
                 .post('/users/login')
-                .send({idNumber: TEST_USER_ID, password: TEST_USER_PASSWORD})
+                .send({idNumber: TEST_USER_USERNAME, password: TEST_USER_PASSWORD})
                 .end((err,res) =>{
                     expect(res.text).to.equal('0');
                     done();
             })
         });
 
-        it('New user can\'t swipe in, bc they arent a lab monitor yet.', (done) => {
+        it('New user can\'t swipe in, bc they aren\'t a lab monitor yet.', (done) => {
             intSession
                 .post('/lab/swipe')
                 .send({idNumber: TEST_USER_ID})
