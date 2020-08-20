@@ -14,14 +14,14 @@ router.get('/',  (req, res) => {
     res.render('manage');
 });
 
-router.get('/home', common.loggedIn, async (req, res) => {
-    res.render('home', {'user': await userManagement.getUser(req.user), 'title': 'Management'});
+router.get('/home', common.loggedIn, (req, res) => {
+    res.render('home', {'user': req.user, 'title': 'Management'});
 });
 
 router.post('/getPermission', common.loggedIn, async (req, res) => {
     if (common.passphraseIsValid(req.body.passphrase)) {
         await userManagement.grantByIdNumber(common.getGrantFromPassphrase(req.body.passphrase),
-            req.user).then( () => {
+            req.user.idNumber).then( () => {
                 res.send('0').end();
             }, () => {
                 res.send('1').end();
@@ -37,7 +37,7 @@ router.post('/changeUsername', common.loggedIn, async (req, res) => {
             () => {
                 res.send('1').end();
             }, async () => {
-                await userManagement.changeUsername(req.user, req.body.username, req.user.username);
+                await userManagement.changeUsername(req.user.idNumber, req.body.username, req.user.username);
                 await lab.updateList();
                 res.send('0').end();
             });
@@ -48,7 +48,7 @@ router.post('/changeUsername', common.loggedIn, async (req, res) => {
 
 router.post('/changeNickname', common.loggedIn, async (req, res) => {
     if (common.isValidNickname(req.body.nickname)) {
-        await userManagement.changeNickname(req.user, req.body.nickname);
+        await userManagement.changeNickname(req.user.idNumber, req.body.nickname);
         await lab.updateList();
         res.send('0').end();
     } else {
@@ -58,7 +58,7 @@ router.post('/changeNickname', common.loggedIn, async (req, res) => {
 
 router.post('/changeName', common.loggedIn, async (req, res) => {
     if (common.isValidName(req.body.name)) {
-        await userManagement.changeName(req.user, req.body.name);
+        await userManagement.changeName(req.user.idNumber, req.body.name);
         await lab.updateList();
         res.send('0').end();
     } else {
@@ -71,9 +71,9 @@ router.post('/changePassword', common.loggedIn, async (req, res) => {
         res.end();
         return;
     }
-    await userManagement.correctCreds(req.user, req.body.password).then(
+    await userManagement.correctCreds(req.user.idNumber, req.body.password).then(
         async () => {
-            await userManagement.setPassword(req.user, req.body.newPassword);
+            await userManagement.setPassword(req.user.idNumber, req.body.newPassword);
             res.send('0').end();
         }, () => {
             res.send('1').end();
@@ -85,9 +85,9 @@ router.post('/deleteSelf', common.loggedIn, async (req, res) => {
         res.end();
         return;
     }
-    await userManagement.correctCreds(req.user, req.body.password,
+    await userManagement.correctCreds(req.user.idNumber, req.body.password,
          () => {
-            userManagement.deleteUser(req.user).then( () => {
+            userManagement.deleteUser(req.user.idNumber).then( () => {
                 req.session.idNumber = null;
                 res.send('0').end();
             });
@@ -98,7 +98,7 @@ router.post('/deleteSelf', common.loggedIn, async (req, res) => {
 
 router.post('/deleteAccount', common.loggedIn, async (req, res) => {
     const userID = req.body.userID;
-    const user = await userManagement.getUser(req.user);
+    const user = req.user;
     if (user.exec !== true || user.admin !== true) {
         res.end();
         return;
@@ -120,7 +120,7 @@ router.post('/deleteAccount', common.loggedIn, async (req, res) => {
 });
 
 router.post('/resetPassword', common.loggedIn, async (req, res) => {
-    const user = await userManagement.getUser(req.user);
+    const user = req.user;
     if (user.exec !== true && user.admin !== true) {
         res.end();
         return;
@@ -148,7 +148,7 @@ router.post('/resetPassword', common.loggedIn, async (req, res) => {
 router.post('/grant', common.loggedIn, async (req, res) => {
     const grant = req.body.grant;
     const userID = req.body.userID;
-    const user = await userManagement.getUser(req.user);
+    const user = req.user;
     if (common.isValidGrant(grant) && common.canGrant(user, grant)) {
         if (common.isValidId(userID)) {
             await userManagement.grantByIdNumber(grant, userID).then( () => {
@@ -170,7 +170,7 @@ router.post('/grant', common.loggedIn, async (req, res) => {
 
 router.post('/resetDatabase', common.loggedIn, async (req, res) => {
     const password = req.body.password;
-    const user = await userManagement.getUser(req.user);
+    const user = req.user;
     if (!password || password.length < 5 || user === undefined || user.admin !== true) {
         res.end();
         return;
@@ -184,7 +184,7 @@ router.post('/resetDatabase', common.loggedIn, async (req, res) => {
 });
 
 router.post('/closeLab', common.loggedIn, async (req, res) => {
-    const user = await userManagement.getUser(req.user);
+    const user = req.user;
     if (user.labMonitor === true || user.exec === true) {
         await lab.closeLab();
         res.send('0').end();

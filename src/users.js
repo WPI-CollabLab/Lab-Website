@@ -14,7 +14,7 @@ router.post('/changePassword',common.authInRequest, async (req, res) => {
 });
 
 router.post('/login',common.authInRequest, (req, res) => {
-    req.session.idNumber = req.user;
+    req.session.idNumber = req.user.idNumber;
     req.session.save(function () {
         res.send('0').end();
     });

@@ -46,7 +46,7 @@ html(lang=en)
                             h4
                                 ul.list-group
                                     div(id='who')
-        if user && user.labMonitor === 'true'
+        if user && user.labMonitor === true
             #kickModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
                 .modal-dialog.modal-md
                     .modal-content
@@ -63,6 +63,6 @@ html(lang=en)
         script(src='/js/common.js')
         script(src='/js/external.js')
         script(src='/js/notify.js')
-        if user && user.labMonitor === 'true'
+        if user && user.labMonitor === true
             script
                 | kicking = true;

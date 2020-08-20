@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha --exit --require @babel/register --require @babel/preset-env src/test/lab.js",
-    "dev": "nodemon --exec node-r @babel/register -r @babel/preset-env src/index.js",
+    "dev": "nodemon --exec node -r @babel/register -r @babel/preset-env src/index.js",
     "start": "node -r @babel/register -r @babel/preset-env src/index.js"
   },
   "author": "Nilesh Patel",
@@ -35,7 +35,6 @@
   },
   "devDependencies": {
     "@babel/node": "^7.10.5",
-    "@babel/polyfill": "^7.10.4",
     "@babel/register": "^7.10.5",
     "chai": "^4.2.0",
     "mocha": "~8.1.1",

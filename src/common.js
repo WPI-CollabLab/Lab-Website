@@ -25,9 +25,14 @@ export async function authInRequest(req, res, next) : Promise<Response> {
         res.end();
     }
     if (isValidId(req.body.idNumber)) {
-        return await correctCreds(req.body.idNumber, req.body.password).then(function () {
-            req.user = req.body.idNumber;
-            next();
+        return await correctCreds(req.body.idNumber, req.body.password).then(async () => {
+            req.user = await getUser(req.body.idNumber);
+            if(req.user === undefined) {
+                req.user = null;
+                res.send('1').end();
+            } else {
+                next();
+            }
         }, function () {
             res.send('1').end();
         });
@@ -38,7 +43,7 @@ export async function authInRequest(req, res, next) : Promise<Response> {
                     res.send('1').end();
                 } else {
                     return await correctCreds(lookup.idNumber, req.body.password).then(() => {
-                        req.user = lookup.idNumber;
+                        req.user = lookup;
                         next();
                     }, function () {
                         res.send('1').end();
@@ -54,12 +59,20 @@ export async function authInRequest(req, res, next) : Promise<Response> {
 
 export async function idNumberInRequest(req, res, next) : Response {
     if (isValidId(req.body.idNumber)) {
-            req.user = req.body.idNumber;
-            next();
+        await getUser(req.body.idNumber).then(function (user) {
+            if(user !== undefined) {
+                req.user = user;
+                next();
+            } else {
+                res.send('2').end();
+            }
+        }, () => {
+            res.send('2').end();
+        });
     } else if (isValidUsername(req.body.idNumber)) {
-            return await getUserByUsername(req.body.idNumber).then(function (user) {
+            await getUserByUsername(req.body.idNumber).then(function (user) {
                 if(user !== undefined) {
-                    req.user = user.idNumber;
+                    req.user = user;
                     next();
                 } else {
                     res.send('2').end();
@@ -76,7 +89,7 @@ export async function loggedIn(req, res, next)  {
     if (req.session.idNumber != null) {
             await getUser(req.session.idNumber).then(function (user) {
                 if(user !== undefined) {
-                    req.user = user.idNumber;
+                    req.user = user;
                     next();
                 } else {
                     res.redirect('/manage');
@@ -93,7 +106,7 @@ export function getLogin(req, res, next) : Promise<Response> {
     if (req.session.idNumber !== null) {
         return getUser(req.session.idNumber).then(function (user) {
             if(user !== undefined) {
-                req.user = user.idNumber;
+                req.user = user;
                 next();
             }
         }, function () {

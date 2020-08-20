@@ -393,7 +393,7 @@ function updatePage(newStatus) {
         isOpen.addClass('text-danger');
     }
     let newList = '';
-    for (let index of newStatus.members) {
+    for (let index of Object.keys(newStatus.members)) {
         if (internal) {
             newList += `<button class="list-group-item" onClick="kick('${index}')">${newStatus.members[index]}</button>`;
         } else {

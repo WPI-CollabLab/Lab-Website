@@ -59,7 +59,7 @@ external.get('/schedule', function (req, res) {
     res.render('schedule');
 });
 
-external.get('/', common.getLogin, function (req, res) {
+external.get('/', common.getLogin, async (req, res) => {
     res.render('externalIndex', {'user': req.user});
 });
 
@@ -71,7 +71,6 @@ external.use('/users', users.router);
 
 external.use('/manage', manage.routes);
 
-internal.set('domain', 'localhost');
 sites.internal = internal.listen(config.internalPort);
 sites.external = external.listen(config.externalPort);
 module.exports = sites;
