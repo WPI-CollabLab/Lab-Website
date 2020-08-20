@@ -9,14 +9,14 @@ import * as lab from './lab'
 import * as manage from './manage'
 import * as common from './common'
 import {User} from "./models/user";
-import {Swipe} from "./models/swipe";
+import {Visit} from "./models/visit";
 const sites = {};
 
 //when running unit tests connection is already created there.
 if(!getConnectionManager().has("default")) {
     createConnection().then(async (connection) => {
         User.useConnection(connection);
-        Swipe.useConnection(connection);
+        Visit.useConnection(connection);
         if (config.nukeOnRestart) {
             await common.resetDatabase();
         }

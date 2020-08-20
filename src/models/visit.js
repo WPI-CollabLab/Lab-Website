@@ -2,16 +2,16 @@ import {BaseEntity,Entity,Column,PrimaryGeneratedColumn,ManyToOne} from "typeorm
 import {User} from "./user";
 
 @Entity()
-export class Swipe extends BaseEntity {
+export class Visit extends BaseEntity {
 
     @PrimaryGeneratedColumn("numeric")
     id = undefined;
 
-    @Column("text")
-    time = "";
+    @Column("timestamp",{ nullable: false })
+    inTime = undefined;
 
-    @Column("text")
-    direction = "";
+    @Column("timestamp",{ nullable: true })
+    outTime = undefined;
 
     @ManyToOne(type => User, user => user.idNumber,{onDelete:'CASCADE'})
     user = undefined;

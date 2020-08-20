@@ -2,7 +2,7 @@ import {createConnection} from "typeorm";
 import * as config from "../config"
 import {expect} from "chai"
 import {User} from "../models/user";
-import {Swipe} from "../models/swipe";
+import {Visit} from "../models/visit";
 import * as common from "../common";
 import session from "supertest-session"
 
@@ -19,7 +19,7 @@ describe('Endpoint', () => {
     before( async () => {
         await createConnection().then(async (connection) => {
             User.useConnection(connection);
-            Swipe.useConnection(connection);
+            Visit.useConnection(connection);
             if (config.nukeOnRestart) {
                 await common.resetDatabase();
             }
