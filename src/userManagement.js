@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import {Swipe} from "./models/swipe";
+import {Visit} from "./models/visit";
 import {User} from "./models/user";
 
 function hash(password, salt) {
@@ -156,7 +156,7 @@ export async function clearDatabase() {
     for(let user of users) {
         await user.remove();
     }
-    let swipes = await Swipe.find();
+    let swipes = await Visit.find();
     for(let swipe of swipes) {
         await swipe.remove();
     }

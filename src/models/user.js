@@ -1,5 +1,5 @@
 import {BaseEntity,Entity,Column,PrimaryColumn,OneToMany} from "typeorm";
-import {Swipe} from "./swipe";
+import {Visit} from "./visit";
 
 @Entity()
 export class User extends BaseEntity {
@@ -22,9 +22,6 @@ export class User extends BaseEntity {
     @Column("boolean")
     needsPassword = false;
 
-    @Column("boolean")
-    displayName = false;
-
     @Column("text")
     nickname = "";
 
@@ -37,6 +34,6 @@ export class User extends BaseEntity {
     @Column("text")
     salt = "";
 
-    @OneToMany(type => Swipe, visits => Swipe.user, {cascade: true})
+    @OneToMany(type => Visit, visits => Visit.user, {cascade: true})
     swipes = undefined;
 }

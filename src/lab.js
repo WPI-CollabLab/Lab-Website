@@ -5,7 +5,7 @@ const external = express.Router();
 
 import * as userManagement from './userManagement'
 import * as common from './common'
-import {Swipe} from "./models/swipe";
+import {Visit} from "./models/visit";
 
 let labStatus = {
     open: false,
@@ -96,11 +96,10 @@ async function swipeIn(user) {
     labStatus.members[user.idNumber] = user;
     labStatus.open = true;
     names[user.username] = toDisp(user);
-    let swipeIn = new Swipe();
-    swipeIn.user = user;
-    swipeIn.time = Date.now();
-    swipeIn.direction = "in";
-    await swipeIn.save();
+    let visit = new Visit();
+    visit.user = user;
+    visit.inTime = new Date();
+    await visit.save();
 }
 
 function toDisp(user) {
@@ -113,11 +112,9 @@ function toDisp(user) {
 async function swipeOut(user) {
     delete labStatus.members[user.idNumber];
     delete names[user.username];
-    let swipeOut = new Swipe();
-    swipeOut.user = user;
-    swipeOut.time = Date.now();
-    swipeOut.direction = "out";
-    await swipeOut.save();
+    let visit = await Visit.findOne({"user": user, "order": {"id": "DESC"}});
+    visit.outTime = new Date();
+    await visit.save();
 }
 
 function countLabMonitorsInLab() {

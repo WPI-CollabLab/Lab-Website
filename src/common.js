@@ -108,6 +108,9 @@ export function getLogin(req, res, next) : Promise<Response> {
             if(user !== undefined) {
                 req.user = user;
                 next();
+            } else {
+                req.user = null;
+                next();
             }
         }, function () {
             req.user = null;
