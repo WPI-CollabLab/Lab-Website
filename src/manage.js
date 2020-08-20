@@ -34,12 +34,17 @@ router.post('/getPermission', common.loggedIn, async (req, res) => {
 router.post('/changeUsername', common.loggedIn, async (req, res) => {
     if (common.isValidUsername(req.body.username)) {
         await userManagement.getUserByUsername(req.body.username).then(
-            () => {
-                res.send('1').end();
-            }, async () => {
-                await userManagement.changeUsername(req.user.idNumber, req.body.username, req.user.username);
-                await lab.updateList();
-                res.send('0').end();
+            async (user) => {
+                if(user !== undefined) {
+                    res.send('1').end();
+                } else {
+                    await userManagement.changeUsername(req.user.idNumber, req.body.username, req.user.username);
+                    await lab.updateList();
+                    res.send('0').end();
+
+                }
+            }, () => {
+                res.send('2').end();
             });
     } else {
         res.send('1').end();
