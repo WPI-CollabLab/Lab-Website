@@ -108,7 +108,6 @@ function swipe(idNumber) {
                     break;
                 default:
                     showMessage('Please try again!', 2000, 'error');
-
                     break;
             }
         });

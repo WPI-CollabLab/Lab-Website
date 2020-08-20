@@ -1,8 +1,29 @@
 import express from "express";
 
-import * as common from './common';
-import * as userManagement from "./userManagement";
-import * as lab from "./lab"
+import {loggedIn,
+    canGrant,
+    getGrantFromPassphrase,
+    isValidGrant,
+    isValidId,
+    isValidName,
+    isValidNickname,
+    isValidUsername,
+    passphraseIsValid,
+    resetDatabase} from './common';
+import {
+    getUser,
+    changeName,
+    changeNickname,
+    changeUsername,
+    correctCreds,
+    deleteUser,
+    getUserByUsername,
+    grantByIdNumber,
+    grantByUsername,
+    resetPassword,
+    setPassword,
+} from "./userManagement";
+import {updateList,closeLab} from "./lab";
 
 let router = express.Router();
 
@@ -14,13 +35,13 @@ router.get('/',  (req, res) => {
     res.render('manage');
 });
 
-router.get('/home', common.loggedIn, (req, res) => {
+router.get('/home', loggedIn, (req, res) => {
     res.render('home', {'user': req.user, 'title': 'Management'});
 });
 
-router.post('/getPermission', common.loggedIn, async (req, res) => {
-    if (common.passphraseIsValid(req.body.passphrase)) {
-        await userManagement.grantByIdNumber(common.getGrantFromPassphrase(req.body.passphrase),
+router.post('/getPermission', loggedIn, async (req, res) => {
+    if (passphraseIsValid(req.body.passphrase)) {
+        await grantByIdNumber(getGrantFromPassphrase(req.body.passphrase),
             req.user.idNumber).then( () => {
                 res.send('0').end();
             }, () => {
@@ -31,90 +52,84 @@ router.post('/getPermission', common.loggedIn, async (req, res) => {
     }
 });
 
-router.post('/changeUsername', common.loggedIn, async (req, res) => {
-    if (common.isValidUsername(req.body.username)) {
-        await userManagement.getUserByUsername(req.body.username).then(
-            async (user) => {
-                if(user !== undefined) {
-                    res.send('1').end();
-                } else {
-                    await userManagement.changeUsername(req.user.idNumber, req.body.username, req.user.username);
-                    await lab.updateList();
-                    res.send('0').end();
-
-                }
-            }, () => {
-                res.send('2').end();
-            });
-    } else {
-        res.send('1').end();
-    }
-});
-
-router.post('/changeNickname', common.loggedIn, async (req, res) => {
-    if (common.isValidNickname(req.body.nickname)) {
-        await userManagement.changeNickname(req.user.idNumber, req.body.nickname);
-        await lab.updateList();
+router.post('/changeUsername', loggedIn, async (req, res) => {
+    if (isValidUsername(req.body.username)) {
+        await changeUsername(req.user, req.body.username);
+        await updateList();
         res.send('0').end();
     } else {
         res.send('1').end();
     }
 });
 
-router.post('/changeName', common.loggedIn, async (req, res) => {
-    if (common.isValidName(req.body.name)) {
-        await userManagement.changeName(req.user.idNumber, req.body.name);
-        await lab.updateList();
+router.post('/changeNickname', loggedIn, async (req, res) => {
+    if (isValidNickname(req.body.nickname)) {
+        await changeNickname(req.user, req.body.nickname);
+        await updateList();
         res.send('0').end();
     } else {
         res.send('1').end();
     }
 });
 
-router.post('/changePassword', common.loggedIn, async (req, res) => {
+router.post('/changeName', loggedIn, async (req, res) => {
+    if (isValidName(req.body.name)) {
+        await changeName(req.user, req.body.name);
+        await updateList();
+        res.send('0').end();
+    } else {
+        res.send('1').end();
+    }
+});
+
+router.post('/changePassword', loggedIn, async (req, res) => {
     if (req.body.password == null || req.body.newPassword == null) {
         res.end();
         return;
     }
-    await userManagement.correctCreds(req.user.idNumber, req.body.password).then(
-        async () => {
-            await userManagement.setPassword(req.user.idNumber, req.body.newPassword);
-            res.send('0').end();
-        }, () => {
-            res.send('1').end();
-        });
+    if (correctCreds(req.user, req.body.password)) {
+        await setPassword(req.user, req.body.newPassword);
+        res.send('0').end();
+    } else {
+        res.send('1').end();
+    }
 });
 
-router.post('/deleteSelf', common.loggedIn, async (req, res) => {
+router.post('/deleteSelf', loggedIn, async (req, res) => {
     if (req.body.password == null) {
         res.end();
         return;
     }
-    await userManagement.correctCreds(req.user.idNumber, req.body.password,
-         () => {
-            userManagement.deleteUser(req.user.idNumber).then( () => {
-                req.session.idNumber = null;
-                res.send('0').end();
-            });
+    if(correctCreds(req.user, req.body.password)) {
+        deleteUser(req.user).then(() => {
+            req.session.idNumber = null;
+            res.send('0').end();
         }, () => {
             res.send('1').end();
         });
+    } else {
+        res.send('1').end();
+    }
 });
 
-router.post('/deleteAccount', common.loggedIn, async (req, res) => {
+router.post('/deleteAccount', loggedIn, async (req, res) => {
     const userID = req.body.userID;
     const user = req.user;
     if (user.exec !== true || user.admin !== true) {
         res.end();
         return;
     }
-    if (common.isValidId(userID)) {
-        await userManagement.deleteUser(userID).then( () => {
-            res.send('0').end();
+    if (isValidId(userID)) {
+        await getUser(userID).then(() => {
+            return deleteUser(userID).then( () => {
+                res.send('0').end();
+            },() => {
+                res.send('1').end();
+            });
         });
-    } else if (common.isValidUsername(userID)) {
-        let tgtuser = await userManagement.getUserByUsername(userID);
-        await deleteUser(tgtuser.idNumber).then( () => {
+    } else if (isValidUsername(userID)) {
+        let targetUser = await getUserByUsername(userID);
+        await deleteUser(targetUser).then( () => {
             res.send('0').end();
         }, () => {
             res.send('1').end();
@@ -124,25 +139,27 @@ router.post('/deleteAccount', common.loggedIn, async (req, res) => {
     }
 });
 
-router.post('/resetPassword', common.loggedIn, async (req, res) => {
+router.post('/resetPassword', loggedIn, async (req, res) => {
     const user = req.user;
     if (user.exec !== true && user.admin !== true) {
         res.end();
         return;
     }
-    if (common.isValidId(req.body.userID)) {
-        await userManagement.resetPassword(req.body.userID).then(function () {
-            res.send('0').end();
-        }, function () {
-            res.send('1').end();
+    if (isValidId(req.body.userID)) {
+        await getUser(req.body.userID).then(()=> {
+            return resetPassword(req.body.userID).then(() => {
+                res.send('0').end();
+            }, () => {
+                res.send('1').end();
+            });
         });
-    } else if (common.isValidUsername(req.body.userID)) {
-        await userManagement.getUserByUsername(req.body.userID).then(
-            function (user) {
-                userManagement.resetPassword(user.idNumber).then(function () {
+    } else if (isValidUsername(req.body.userID)) {
+        await getUserByUsername(req.body.userID).then(
+             (user) => {
+                return resetPassword(user.idNumber).then(() => {
                     res.send('0').end();
                 });
-            }, function () {
+            }, () => {
                 res.send('1').end();
             });
     } else {
@@ -150,19 +167,19 @@ router.post('/resetPassword', common.loggedIn, async (req, res) => {
     }
 });
 
-router.post('/grant', common.loggedIn, async (req, res) => {
+router.post('/grant', loggedIn, async (req, res) => {
     const grant = req.body.grant;
     const userID = req.body.userID;
     const user = req.user;
-    if (common.isValidGrant(grant) && common.canGrant(user, grant)) {
-        if (common.isValidId(userID)) {
-            await userManagement.grantByIdNumber(grant, userID).then( () => {
+    if (isValidGrant(grant) && canGrant(user, grant)) {
+        if (isValidId(userID)) {
+            await grantByIdNumber(grant, userID).then( () => {
                 res.send('0').end();
             }, () => {
                 res.send('1').end();
             });
-        } else if (common.isValidUsername(userID)) {
-            await userManagement.grantByUsername(grant, userID).then( () => {
+        } else if (isValidUsername(userID)) {
+            await grantByUsername(grant, userID).then( () => {
                 res.send('0').end();
             }, () => {
                 res.send('1').end();
@@ -173,31 +190,29 @@ router.post('/grant', common.loggedIn, async (req, res) => {
     }
 });
 
-router.post('/resetDatabase', common.loggedIn, async (req, res) => {
+router.post('/resetDatabase', loggedIn, async (req, res) => {
     const password = req.body.password;
     const user = req.user;
     if (!password || password.length < 5 || user === undefined || user.admin !== true) {
         res.end();
         return;
     }
-    await userManagement.correctCreds(req.user.idNumber, password).then( async () => {
-        await common.resetDatabase();
-        res.send('0').end();
-    }, () => {
-        res.send('1').end();
-    });
-});
-
-router.post('/closeLab', common.loggedIn, async (req, res) => {
-    const user = req.user;
-    if (user.labMonitor === true || user.exec === true) {
-        await lab.closeLab();
+    if(correctCreds(req.user, password)) {
+        await resetDatabase();
         res.send('0').end();
     } else {
         res.send('1').end();
     }
 });
 
-
+router.post('/closeLab', loggedIn, async (req, res) => {
+    const user = req.user;
+    if (user.labMonitor === true || user.exec === true) {
+        await closeLab();
+        res.send('0').end();
+    } else {
+        res.send('1').end();
+    }
+});
 
 module.exports = {'routes': router};

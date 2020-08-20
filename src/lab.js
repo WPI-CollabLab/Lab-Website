@@ -1,10 +1,10 @@
 import express from "express";
 
-const lab = express.Router();
-const external = express.Router();
+export const internal = express.Router();
+export const external = express.Router();
 
-import * as userManagement from './userManagement'
-import * as common from './common'
+import {getUser,getUserByUsername} from './userManagement'
+import {authInRequest,idNumberInRequest,loggedIn,isValidNickname} from "./common";
 import {Visit} from "./models/visit";
 
 let labStatus = {
@@ -14,7 +14,7 @@ let labStatus = {
 
 let names = {};
 
-lab.get('/status', function (req, res) {
+internal.get('/status', function (req, res) {
     res.send({"open": labStatus.open, "members": names});
 });
 
@@ -22,7 +22,7 @@ external.get('/status', function (req, res) {
     res.send({"open": labStatus.open, "members": names});
 });
 
-lab.post('/close',common.authInRequest, async (req, res) => {
+internal.post('/close',authInRequest, async (req, res) => {
     let user = req.user;
     if (user.labMonitor === true) {
         await closeLab();
@@ -32,35 +32,35 @@ lab.post('/close',common.authInRequest, async (req, res) => {
     }
 });
 
-lab.post('/swipe',common.idNumberInRequest, async (req, res) => {
+internal.post('/swipe',idNumberInRequest, async (req, res) => {
     let user = req.user;
-    if(user === undefined)
+    if(user === undefined || user === null)
         res.send('2').end();
     else
         return await processSwipe(user, res);
 });
 
-external.post('/kick',common.loggedIn, async (req, res) => {
+external.post('/kick',loggedIn, async (req, res) => {
     let user = req.user;
     if (user.labMonitor !== true && user.exec !== true && user.admin !== true) {
         res.end();
     }
-    await userManagement.getUserByUsername(req.body.idNumber).then( async (user) => {
+    await getUserByUsername(req.body.idNumber).then( async (user) => {
         await processSwipe(user, res);
     });
 });
 
-async function closeLab() {
+export async function closeLab() {
     labStatus.open = false;
     for(const user of Object.values(labStatus.members)) {
         await swipeOut(user);
     }
 }
 
-async function updateList()  {
+export async function updateList()  {
     names = {};
     for (let idNumber in labStatus.members) {
-        await userManagement.getUser(idNumber).then( (user) => {
+        await getUser(idNumber).then( (user) => {
             names[user.username] = toDisp(user);
             labStatus.members[user.idNumber] = user;
         });
@@ -103,7 +103,7 @@ async function swipeIn(user) {
 }
 
 function toDisp(user) {
-    if (common.isValidNickname(user.nickname)) {
+    if (isValidNickname(user.nickname)) {
         return user.name + " (" + user.nickname + ")";
     }
     return user.name;
@@ -126,5 +126,3 @@ function countLabMonitorsInLab() {
     }
     return count;
 }
-
-module.exports = {'internal': lab, 'external': external, 'closeLab': closeLab,'updateList': updateList};

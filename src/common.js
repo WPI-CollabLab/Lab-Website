@@ -1,4 +1,11 @@
-import * as config from "./config"
+import {
+    usernameRegex,
+    nameRegex,
+    labMonitorPassphrase,
+    execPassphrase,
+    adminPassphrase,
+    defaultAdminPassword, adminUsername, adminId, adminName
+} from "./config"
 import {
     correctCreds,
     getUserByUsername,
@@ -13,43 +20,39 @@ export function isValidId(idNumber) {
 }
 
 export function isValidUsername(username) {
-    return username != null && config.usernameRegex.test(username) && username.length < 31;
+    return username != null && usernameRegex.test(username) && username.length < 31;
 }
 
 export function isValidName(str) {
-    return config.nameRegex.test(str) && str.length < 31;
+    return nameRegex.test(str) && str.length < 31;
 }
 
-export async function authInRequest(req, res, next) : Promise<Response> {
+export async function authInRequest(req, res, next) {
     if (req.body.password === null) {
         res.end();
     }
     if (isValidId(req.body.idNumber)) {
-        return await correctCreds(req.body.idNumber, req.body.password).then(async () => {
-            req.user = await getUser(req.body.idNumber);
-            if(req.user === undefined) {
+        return await getUser(req.body.idNumber).then((user) => {
+            if(correctCreds(user,req.body.password)) {
+                req.user = user;
+                next();
+            } else {
                 req.user = null;
                 res.send('1').end();
-            } else {
-                next();
             }
-        }, function () {
+        }, () => {
             res.send('1').end();
         });
     } else if (isValidUsername(req.body.idNumber)) {
-        return await getUserByUsername(req.body.idNumber).then(
-            async (lookup) => {
-                if(lookup === undefined) {
-                    res.send('1').end();
+        return await getUserByUsername(req.body.idNumber).then((user) => {
+                if(correctCreds(user, req.body.password)) {
+                    req.user = user;
+                    next();
                 } else {
-                    return await correctCreds(lookup.idNumber, req.body.password).then(() => {
-                        req.user = lookup;
-                        next();
-                    }, function () {
-                        res.send('1').end();
-                    })
+                    req.user = null;
+                    res.send('1').end();
                 }
-            }, function () {
+            }, () => {
                 res.send('1').end();
             });
     } else {
@@ -57,26 +60,18 @@ export async function authInRequest(req, res, next) : Promise<Response> {
     }
 }
 
-export async function idNumberInRequest(req, res, next) : Response {
+export async function idNumberInRequest(req, res, next) {
     if (isValidId(req.body.idNumber)) {
-        await getUser(req.body.idNumber).then(function (user) {
-            if(user !== undefined) {
-                req.user = user;
-                next();
-            } else {
-                res.send('2').end();
-            }
+        await getUser(req.body.idNumber).then((user) => {
+            req.user = user;
+            next();
         }, () => {
             res.send('2').end();
         });
     } else if (isValidUsername(req.body.idNumber)) {
-            await getUserByUsername(req.body.idNumber).then(function (user) {
-                if(user !== undefined) {
-                    req.user = user;
-                    next();
-                } else {
-                    res.send('2').end();
-                }
+            await getUserByUsername(req.body.idNumber).then((user) => {
+                req.user = user;
+                next();
         }, () => {
             res.send('2').end();
         });
@@ -86,33 +81,24 @@ export async function idNumberInRequest(req, res, next) : Response {
 }
 
 export async function loggedIn(req, res, next)  {
-    if (req.session.idNumber != null) {
-            await getUser(req.session.idNumber).then(function (user) {
-                if(user !== undefined) {
-                    req.user = user;
-                    next();
-                } else {
-                    res.redirect('/manage');
-                }
+    if (req.session.idNumber !== null) {
+            await getUser(req.session.idNumber).then((user) => {
+                req.user = user;
+                next();
         },  () => {
             res.redirect('/manage');
-        })
+        });
     } else {
-        return res.redirect('/manage');
+         res.redirect('/manage');
     }
 }
 
-export function getLogin(req, res, next) : Promise<Response> {
+export async function getLogin(req, res, next) {
     if (req.session.idNumber !== null) {
-        return getUser(req.session.idNumber).then(function (user) {
-            if(user !== undefined) {
-                req.user = user;
-                next();
-            } else {
-                req.user = null;
-                next();
-            }
-        }, function () {
+        return await getUser(req.session.idNumber).then((user) => {
+            req.user = user;
+            next();
+        }, () => {
             req.user = null;
             next();
         })
@@ -129,18 +115,18 @@ export function isValidNickname(nickname) {
 
 export function passphraseIsValid(passphrase) {
     return passphrase != null && (
-        passphrase === config.labMonitorPassphrase ||
-        passphrase === config.execPassphrase ||
-        passphrase === config.adminPassphrase);
+        passphrase === labMonitorPassphrase ||
+        passphrase === execPassphrase ||
+        passphrase === adminPassphrase);
 }
 
 export function getGrantFromPassphrase (passphrase) {
     switch (passphrase) {
-        case config.labMonitorPassphrase:
+        case labMonitorPassphrase:
             return 'labMonitor';
-        case config.execPassphrase:
+        case execPassphrase:
             return 'exec';
-        case config.adminPassphrase:
+        case adminPassphrase:
             return 'admin';
         default:
             return false;
@@ -163,8 +149,8 @@ export function canGrant(user, grant) {
 }
 
 export async function resetDatabase() {
-    return clearDatabase().then (()=>{
-        return createUser(config.adminId, config.adminUsername, config.adminName,
-            config.defaultAdminPassword, true, true, true);
+    return clearDatabase().then (() => {
+        return createUser(adminId, adminUsername, adminName,
+            defaultAdminPassword, true, true, true);
     })
 }
