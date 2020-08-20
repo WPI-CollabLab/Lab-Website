@@ -64,10 +64,10 @@ external.get('/schedule', function (req, res) {
 });
 
 external.get('/about', function(req, res){
-  res.render('about');
+    res.render('about');
 });
 
-external.get('/', common.getLogin, function (req, res) {
+external.get('/', common.getLogin, async (req, res) => {
     res.render('externalIndex', {'user': req.user});
 });
 

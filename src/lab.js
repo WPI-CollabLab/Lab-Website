@@ -23,7 +23,7 @@ external.get('/status', function (req, res) {
 });
 
 lab.post('/close',common.authInRequest, async (req, res) => {
-    let user = await userManagement.getUser(req.user);
+    let user = req.user;
     if (user.labMonitor === true) {
         await closeLab();
         res.send('0').end();
@@ -33,15 +33,15 @@ lab.post('/close',common.authInRequest, async (req, res) => {
 });
 
 lab.post('/swipe',common.idNumberInRequest, async (req, res) => {
-    let user = await userManagement.getUser(req.user);
+    let user = req.user;
     if(user === undefined)
         res.send('2').end();
     else
-        await processSwipe(user, res);
+        return await processSwipe(user, res);
 });
 
 external.post('/kick',common.loggedIn, async (req, res) => {
-    let user = await userManagement.getUser(req.user);
+    let user = req.user;
     if (user.labMonitor !== true && user.exec !== true && user.admin !== true) {
         res.end();
     }
@@ -72,21 +72,23 @@ async function processSwipe(user, res) {
         res.send("1").end();
         return;
     }
+
     if (labStatus.members[user.idNumber] === undefined) {
         if (user.needsPassword === true) {
             res.send("4").end();
+        } else {
+            await swipeIn(user);
+            res.send("0").end();
         }
-        await swipeIn(user);
     } else {
         const numLabMonitors = countLabMonitorsInLab();
         if (numLabMonitors > 1 || user.labMonitor === false || Object.keys(names).length === 1) {
-            await swipeOut(user)
+            await swipeOut(user);
+            res.send("0").end();
         } else {
             res.send("3").end();
-            return;
         }
     }
-    res.send("0").end();
     labStatus.open = countLabMonitorsInLab() > 0;
 }
 
