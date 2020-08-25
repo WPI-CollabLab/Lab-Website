@@ -9,6 +9,8 @@ function loadTab(index) {
             break;
         case 2:
             show('exec');
+            updateVisits();
+            setInterval(updateVisits, 3000);
             break;
         case 3:
             show('admin');
@@ -221,6 +223,22 @@ function grantLabMonitor() {
                 addError('grantLMID', 'User doesn\'t exist in the system.');
                 break;
         }
+    });
+}
+
+//List user swipe history
+function updateVisits() {
+    getData('/lab/visits', function (response) {
+        console.log("Response:", response);
+        console.log("Response.visits:", response.visits.inTime);
+        for (let visit in response.visits) {
+            console.log("Visit.inTime:", visit);
+        }
+        // let newList = '';
+        // for (let index of Object.keys(response.members)) {
+        //     newList += `<li class="list-group-item">${response.members[index]}</li>`;
+        // }
+        // document.getElementById('who').innerHTML = newList;
     });
 }
 

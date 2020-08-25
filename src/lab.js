@@ -22,6 +22,13 @@ external.get('/status', function (req, res) {
     res.send({"open": labStatus.open, "members": names});
 });
 
+external.get('/visits', function (req, res) {
+    updateVisits().then(visits => {
+        res.send({"visits": visits});
+    });
+
+})
+
 internal.post('/close',authInRequest, async (req, res) => {
     let user = req.user;
     if (user.labMonitor === true) {
@@ -55,6 +62,12 @@ export async function closeLab() {
     for(const user of Object.values(labStatus.members)) {
         await swipeOut(user);
     }
+}
+
+export async function updateVisits() {
+    await Visit.find().then( (visits) => {
+        return visits;
+    });
 }
 
 export async function updateList()  {

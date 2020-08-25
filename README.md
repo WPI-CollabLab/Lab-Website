@@ -40,7 +40,7 @@ sudo service website start
     ```
 
   2. Clone the repository into some directory:
-    `git clone git@github.com:nileshp87/collablab.git`
+    `git clone https://github.com/WPI-CollabLab/Lab-Website.git`
 
   3. Install the node dependencies:
     ```
@@ -48,22 +48,17 @@ sudo service website start
     npm install
     ```
   4. Modify config.js, especially:
-    * Default admin credentials, generally should be set by sysadmin or president to their information.
-    * Default passphrases, there's three and they should be changed from their default
-    * cookieSecret, this should be random, I recommend generating a twelve character string from random.org or equivalent.
-    * nukeOnRestart, this should be set to false.
-    * externalPort, this should be set to 80.
+     - Default admin credentials, generally should be set by sysadmin or president to their information.
+     - Default passphrases, there's three and they should be changed from their default
+     - cookieSecret, this should be random, I recommend generating a twelve character string from random.org or equivalent.
+     - nukeOnRestart, this should be set to false.
+     - externalPort, this should be set to 80.
 
   5. Add iptables rules to block communication to the server from anywhere but localhost on the configured internalPort (default: 8080)
 
-    `sudo iptables -A INPUT -p tcp --destination-port 8080 -j DROP`
-
-  6. Start the redis server:
-    ```
-    redis-server &
-    ```
-
-  7. Start with ForeverJS
+    'sudo iptables -A INPUT -p tcp --destination-port 8080 -j DROP`
+    
+  6. Start with ForeverJS
 
     forever start index.js
 
@@ -77,20 +72,17 @@ sudo service website start
     
 
   2. Clone the repository into some directory:
-    `git clone git@github.com:nileshp87/collablab.git`
+    `git clone https://github.com/WPI-CollabLab/Lab-Website.git`
 
   3. Install the node dependencies:
     ```
     cd collablab
     npm install
     ```
-  4. Start the redis server:
-    ```
-    redis-server &
-    ```
+  4. Start the postgresql server, supply the postgres username and password in the ormconfig.json, make sure to make a database called "collablab" or update ormconfig.js to the correct database name
 
-  5. Run nodemon on index.js:
+  5. Run the website:
     ```
-    nodemon index.js
+    npm start
     ```
 
