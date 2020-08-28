@@ -9,7 +9,7 @@ $('#kickModal').on('hidden.bs.modal', function () {
 });
 
 function login() {
-    window.location.replace('/login');
+    window.location.replace('/manage');
 }
 
 
