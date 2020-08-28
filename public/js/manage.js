@@ -11,9 +11,6 @@ passwordModal.on('hidden.bs.modal', function () {
 passwordModal.on('shown.bs.modal', function () {
     $('#currentPassword').focus();
 });
-function cancelLogin() {
-  window.location.replace('/');
-}
 
 function cancelLogin() {
     window.location.replace('/');

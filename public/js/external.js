@@ -8,6 +8,10 @@ $('#kickModal').on('hidden.bs.modal', function () {
     getStatus();
 });
 
+function login() {
+    window.location.replace('/login');
+}
+
 
 function getStatus() {
     getData('/lab/status', function (response) {
