@@ -6,6 +6,7 @@ export const external = express.Router();
 import {getUser,getUserByUsername} from './userManagement'
 import {authInRequest,idNumberInRequest,loggedIn,isValidNickname} from "./common";
 import {Visit} from "./models/visit";
+import {MoreThan, LessThan} from "typeorm";
 
 let labStatus = {
     open: false,
@@ -22,11 +23,9 @@ external.get('/status', function (req, res) {
     res.send({"open": labStatus.open, "members": names});
 });
 
-external.get('/visits', function (req, res) {
-    updateVisits().then(visits => {
-        res.send({"visits": visits});
-    });
-
+external.post('/visits', async (req, res) => {
+    let visits = await getVisits(req.body.startDate,req.body.endDate);
+    res.send(visits).end();
 })
 
 internal.post('/close',authInRequest, async (req, res) => {
@@ -64,10 +63,8 @@ export async function closeLab() {
     }
 }
 
-export async function updateVisits() {
-    await Visit.find().then( (visits) => {
-        return visits;
-    });
+export async function getVisits(startDate = new Date(0), endDate = new Date()) {
+    return await Visit.find({inTime: MoreThan(startDate),outTime:LessThan(endDate),relations: ["user"]});
 }
 
 export async function updateList()  {

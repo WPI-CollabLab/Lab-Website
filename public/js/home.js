@@ -9,8 +9,6 @@ function loadTab(index) {
             break;
         case 2:
             show('exec');
-            updateVisits();
-            setInterval(updateVisits, 3000);
             break;
         case 3:
             show('admin');
@@ -227,18 +225,21 @@ function grantLabMonitor() {
 }
 
 //List user swipe history
-function updateVisits() {
-    getData('/lab/visits', function (response) {
-        console.log("Response:", response);
-        console.log("Response.visits:", response.visits.inTime);
-        for (let visit in response.visits) {
-            console.log("Visit.inTime:", visit);
+function exportVisits() {
+    const data = {'startDate': $("#visitStartDate").val(), 'endDate': $("#visitEndDate").val()};
+    postData('/lab/visits', JSON.stringify(data), function (response) {
+        const visitTable = $('#visitTable');
+        if(response.length === 0) {
+            addError('visitEndDate', 'No visits in range.');
+            visitTable.html("");
+        } else {
+            let outStr="<thead><tr><th>User ID</th><th>User Name</th><th>In Time</th><th>Out Time</th></tr></thead><tbody>";
+            for(const visit of response) {
+                outStr+=`<tr><td>${visit.user.idNumber}</td><td>${visit.user.name}</td><td>${visit.inTime}</td><td>${visit.outTime}</td></tr>`;
+            }
+            outStr+="</tbody>"
+            visitTable.html(outStr);
         }
-        // let newList = '';
-        // for (let index of Object.keys(response.members)) {
-        //     newList += `<li class="list-group-item">${response.members[index]}</li>`;
-        // }
-        // document.getElementById('who').innerHTML = newList;
     });
 }
 
@@ -337,3 +338,9 @@ function success(id, message) {
 function toStatus() {
     window.location.replace('/');
 }
+$('.datepicker').datepicker({
+    format: 'mm/dd/yyyy',
+    startDate: '-2y',
+    autoclose: true,
+    todayHighlight: true
+});
