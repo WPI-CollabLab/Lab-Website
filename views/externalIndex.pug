@@ -30,7 +30,8 @@ html(lang=en)
                             a(href='/schedule') Scheduled Lab Hours
                     .navbar-form.navbar-right
                         button.pull-right.btn.btn-primary(style='display:inline;' onClick='login()')
-                            span.glyphicon.glyphicon-log-in(style='padding-right:7px;')  "Management"
+                            span.glyphicon.glyphicon-log-in(style='padding-right:7px;')
+                            = "Management"
         .container
             row
                 .col-sm-12
@@ -71,6 +72,3 @@ html(lang=en)
         script(src='/js/common.js')
         script(src='/js/external.js')
         script(src='/js/notify.js')
-        if user && user.labMonitor === true
-            script
-                | kicking = true;

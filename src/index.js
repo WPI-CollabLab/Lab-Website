@@ -3,7 +3,6 @@ import session from "express-session";
 import redis from "redis";
 import bodyParser from "body-parser";
 import {createConnection,getConnectionManager} from 'typeorm'
-
 import {nukeOnRestart,cookieSecret,internalPort,externalPort} from './config'
 import {router as userRouter} from './users'
 import {internal as labInt, external as labExt} from './lab'
@@ -76,17 +75,9 @@ external.use('/lab', labExt);
 
 external.use('/users', userRouter);
 
-manage.setLab(lab.labActions);
 external.use('/manage', manageRoutes);
 
-setup();
 internal.set('domain', 'localhost');
-
-function setup() {
-    if (config.nukeOnRestart) {
-        common.resetDatabase();
-    }
-}
 
 sites.internal = internal.listen(internalPort);
 sites.external = external.listen(externalPort);

@@ -3,14 +3,14 @@ import crypto from 'crypto'
 import {Visit} from "./models/visit";
 import {User} from "./models/user";
 
-function hash(password : string , salt : string ) {
+function hash(password , salt ) {
     let hash = crypto.createHash('sha256');
     hash.update(salt);
     hash.update(password);
     return hash.digest('hex');
 }
 
-export async function setPassword(user : User, password : string, needsPassword : boolean = false) : Promise<boolean> {
+export async function setPassword(user, password, needsPassword = false) {
        const salt = crypto.randomBytes(8).toString('hex');
        user.password = hash(password, salt);
        user.salt = salt;
@@ -19,7 +19,7 @@ export async function setPassword(user : User, password : string, needsPassword 
        return true;
 }
 
-export async function getUser(idNumber) : Promise<User | undefined> {
+export async function getUser(idNumber) {
     return User.findOne({idNumber: idNumber}).then((user) => {
             if(user !== undefined) {
                 return user;
@@ -30,7 +30,7 @@ export async function getUser(idNumber) : Promise<User | undefined> {
     );
 }
 
-export async function getUserByUsername(username) : Promise<User> {
+export async function getUserByUsername(username) {
     return User.findOne({username: username}).then((user) => {
         if(user !== undefined) {
             return user;
@@ -40,7 +40,7 @@ export async function getUserByUsername(username) : Promise<User> {
     });
 }
 
-export async function userExists(idNumber : Number) : Promise<void> {
+export async function userExists(idNumber) {
     return User.findOne(idNumber).then(
         (user) => {
             if(user !== undefined) {
@@ -51,7 +51,7 @@ export async function userExists(idNumber : Number) : Promise<void> {
         });
 }
 
-export async function createUser(idNumber, username, name, password, labMonitor, exec, admin) : Promise<boolean> {
+export async function createUser(idNumber, username, name, password, labMonitor, exec, admin) {
     return userExists(idNumber).then(() => new Error("ID already in system!"), () => {
         return usernameAvailable(username).then(async () => {
             const salt = crypto.randomBytes(8).toString('hex');
@@ -71,13 +71,13 @@ export async function createUser(idNumber, username, name, password, labMonitor,
     });
 }
 
-export function correctCreds(user : User, password : string) : boolean {
+export function correctCreds(user, password) {
     return user.password === hash(password, user.salt);
 }
 
 
 
-export async function usernameAvailable(username : string) : Promise<void> {
+export async function usernameAvailable(username) {
     return getUserByUsername(username).then(() => {
             return Promise.reject(new Error("User exists."));
     },() => {
@@ -85,16 +85,16 @@ export async function usernameAvailable(username : string) : Promise<void> {
     });
 }
 
-export async function expirePassword(user  : User) : Promise<void> {
+export async function expirePassword(user) {
     user.needsPassword = true;
     return user.save();
 }
 
-export async function deleteUser(user : User) {
+export async function deleteUser(user) {
     return user.remove();
 }
 
-function applyGrant(grant : string, user : User) {
+function applyGrant(grant, user) {
     if (grant === 'labMonitor') {
         user.labMonitor = true;
         return user.save();
@@ -109,29 +109,29 @@ function applyGrant(grant : string, user : User) {
     }
 }
 
-export async function grantByIdNumber(grant : string , idNumber : Number) {
+export async function grantByIdNumber(grant, idNumber) {
     return getUser(idNumber).then((user) => {
         return applyGrant(grant,user);
     },() => false);
 }
 
-export async function grantByUsername(grant : string, username : string) {
+export async function grantByUsername(grant, username) {
     return getUserByUsername(username).then((user) => {
         return applyGrant(grant,user);
     },() => false);
 }
 
-export async function changeNickname(user : User, newNickname : string) {
+export async function changeNickname(user, newNickname) {
     user.nickname = newNickname;
     return user.save();
 }
 
-export async function changeUsername(user : User , newUsername : string) {
+export async function changeUsername(user, newUsername) {
     user.username = newUsername;
     return user.save();
 }
 
-export async function changeName(user : User, newName : string) {
+export async function changeName(user, newName) {
     user.name = newName;
     return user.save();
 }
@@ -148,6 +148,6 @@ export async function clearDatabase() {
     return true;
 }
 
-export async function resetPassword(user : User) {
+export async function resetPassword(user) {
     return setPassword(user, user.idNumber, true);
 }
