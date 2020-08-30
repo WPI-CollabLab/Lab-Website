@@ -146,8 +146,8 @@ router.post('/resetPassword', loggedIn, async (req, res) => {
         return;
     }
     if (isValidId(req.body.userID)) {
-        await getUser(req.body.userID).then(()=> {
-            return resetPassword(req.body.userID).then(() => {
+        await getUser(req.body.userID).then((user)=> {
+            return resetPassword(user).then(() => {
                 res.send('0').end();
             }, () => {
                 res.send('1').end();
@@ -156,7 +156,7 @@ router.post('/resetPassword', loggedIn, async (req, res) => {
     } else if (isValidUsername(req.body.userID)) {
         await getUserByUsername(req.body.userID).then(
              (user) => {
-                return resetPassword(user.idNumber).then(() => {
+                return resetPassword(user).then(() => {
                     res.send('0').end();
                 });
             }, () => {
