@@ -149,5 +149,5 @@ export async function clearDatabase() {
 }
 
 export async function resetPassword(user) {
-    return setPassword(user, user.idNumber, true);
+    return setPassword(user, user.idNumber.toString(), true);
 }

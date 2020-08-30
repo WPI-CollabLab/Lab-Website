@@ -7,7 +7,7 @@ import {adminPassphrase, execPassphrase, labMonitorPassphrase} from "./config";
 
 router.post('/changePassword',authInRequest, async (req, res) => {
     if (req.body.newPassword != null && req.body.newPassword.length > 4) {
-        await setPassword(req.user.idNumber, req.body.newPassword);
+        await setPassword(req.user, req.body.newPassword);
         res.send('0').end();
     } else {
         res.end();
