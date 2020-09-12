@@ -94,7 +94,7 @@ export async function deleteUser(user) {
     return user.remove();
 }
 
-function applyGrant(grant, user) {
+export async function grantPrivilege(user,grant) {
     if (grant === 'labMonitor') {
         user.labMonitor = true;
         return user.save();
@@ -107,18 +107,6 @@ function applyGrant(grant, user) {
     } else {
         return false;
     }
-}
-
-export async function grantByIdNumber(grant, idNumber) {
-    return getUser(idNumber).then((user) => {
-        return applyGrant(grant,user);
-    },() => false);
-}
-
-export async function grantByUsername(grant, username) {
-    return getUserByUsername(username).then((user) => {
-        return applyGrant(grant,user);
-    },() => false);
 }
 
 export async function changeNickname(user, newNickname) {

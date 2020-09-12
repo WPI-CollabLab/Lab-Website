@@ -28,7 +28,7 @@ registration.on('hidden.bs.modal', function () {
     $("#userIdNumberGroup").removeClass('has-error');
     $("#passphraseGroup").removeClass('has-error');
     $("#usernameGroup").removeClass('has-error');
-    $("#passwordRegistrationCloup").removeClass('has-error');
+    $("#passwordRegistrationGroup").removeClass('has-error');
 });
 
 closeModal.on('hidden.bs.modal', function () {
@@ -160,7 +160,7 @@ function failedPassword() {
 }
 
 function cancelRegistration() {
-  $('#registration').modal('hide');
+  registration.modal('hide');
 }
 
 function submitRegistration(){
@@ -287,7 +287,7 @@ function submitRegistration(){
                     addError('passphrase', 'Your passphrase is invalid!');
                     break;
                 default:
-                    showFailure();
+                    addError('passphrase', 'Unknown Error!');
                     break;
             }
         });
@@ -357,7 +357,7 @@ function kickRemaining() {
                 showMessage('Lab closed!', 5000);
                 break;
             case 1:
-                wrongPassword();
+                showMessage('Wrong Password!', 5000,'error');
                 break;
             case 2:
                 hideModals();
@@ -386,8 +386,8 @@ function getStatus(){
 }
 
 function refocusCursor() {
-  console.log(!($("#registration").data('bs.modal') || {}).isShown);
-  if (!($("#registration").data('bs.modal') || {}).isShown) {
+  console.log(!(registration.data('bs.modal') || {}).isShown);
+  if (!(registration.data('bs.modal') || {}).isShown) {
     $('#idNumber').focus();
   }
 }
@@ -404,7 +404,7 @@ function updatePage(newStatus) {
         isOpen.addClass('text-danger');
     }
     let newList = '';
-    for (let index of Object.keys(newStatus.members)) {
+    for (let index in newStatus.members) {
         if (internal) {
             newList += `<button class="list-group-item" onClick="kick('${index}')">${newStatus.members[index]}</button>`;
         } else {

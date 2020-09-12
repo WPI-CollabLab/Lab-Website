@@ -12,7 +12,6 @@ function login() {
     window.location.replace('/manage');
 }
 
-
 function getStatus() {
     getData('/lab/status', function (response) {
         updatePage(response);
@@ -20,15 +19,15 @@ function getStatus() {
 }
 
 function updatePage(newStatus) {
-    const isopen = $('#isOpen');
+    const isOpen = $('#isOpen');
     if (newStatus.open) {
         document.getElementById('isOpen').innerHTML = 'OPEN';
-        isopen.removeClass('text-danger');
-        isopen.addClass('text-success');
+        isOpen.removeClass('text-danger');
+        isOpen.addClass('text-success');
     } else {
         document.getElementById('isOpen').innerHTML = 'CLOSED';
-        isopen.removeClass('text-success');
-        isopen.addClass('text-danger');
+        isOpen.removeClass('text-success');
+        isOpen.addClass('text-danger');
     }
     let newList = '';
         for (let index in newStatus.members) {

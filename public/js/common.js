@@ -1,5 +1,5 @@
 function postData(url, data, callback){
-    http = new XMLHttpRequest();
+    let http = new XMLHttpRequest();
     http.open('POST', url, true);
     http.setRequestHeader('Content-type', 'application/json');
     http.onreadystatechange = function() {
@@ -11,7 +11,7 @@ function postData(url, data, callback){
 }
 
 function getData(url, callback){
-    http = new XMLHttpRequest();
+    let http = new XMLHttpRequest();
     http.open('GET', url, true);
     http.onreadystatechange = function() {
         if(http.readyState === 4 && http.status === 200) {
@@ -40,12 +40,12 @@ function isValidNickname(nickname){
 }
 
 function addError(idName, error, leave) {
-    let idsel = $('#'+idName);
-    idsel.notify(error, {className: 'error', elementPosition: 'right middle', autoHideDelay: 2000});
-    idsel.focus();
+    let idSel = $('#'+idName);
+    idSel.notify(error, {className: 'error', elementPosition: 'right middle', autoHideDelay: 2000});
+    idSel.focus();
     $('#'+idName + 'Group').addClass('has-error');
     if(!leave){
-        idsel.val('');
+        idSel.val('');
     }
 }
 

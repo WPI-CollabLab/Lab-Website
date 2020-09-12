@@ -74,6 +74,7 @@ internal.use('/lab', labInt);
 external.use('/lab', labExt);
 
 external.use('/users', userRouter);
+internal.use('/users', userRouter);
 
 external.use('/manage', manageRoutes);
 

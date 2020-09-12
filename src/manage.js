@@ -18,8 +18,7 @@ import {
     correctCreds,
     deleteUser,
     getUserByUsername,
-    grantByIdNumber,
-    grantByUsername,
+    grantPrivilege,
     resetPassword,
     setPassword,
 } from "./userManagement";
@@ -41,8 +40,7 @@ router.get('/home', loggedIn, (req, res) => {
 
 router.post('/getPermission', loggedIn, async (req, res) => {
     if (passphraseIsValid(req.body.passphrase)) {
-        await grantByIdNumber(getGrantFromPassphrase(req.body.passphrase),
-            req.user.idNumber).then( () => {
+        await grantPrivilege(req.user,getGrantFromPassphrase(req.body.passphrase)).then( () => {
                 res.send('0').end();
             }, () => {
                 res.send('1').end();
@@ -114,8 +112,7 @@ router.post('/deleteSelf', loggedIn, async (req, res) => {
 
 router.post('/deleteAccount', loggedIn, async (req, res) => {
     const userID = req.body.userID;
-    const user = req.user;
-    if (user.exec !== true || user.admin !== true) {
+    if (req.user.exec !== true || req.user.admin !== true) {
         res.end();
         return;
     }
@@ -170,17 +167,26 @@ router.post('/resetPassword', loggedIn, async (req, res) => {
 router.post('/grant', loggedIn, async (req, res) => {
     const grant = req.body.grant;
     const userID = req.body.userID;
-    const user = req.user;
-    if (isValidGrant(grant) && canGrant(user, grant)) {
+    if (isValidGrant(grant) && canGrant(req.user, grant)) {
         if (isValidId(userID)) {
-            await grantByIdNumber(grant, userID).then( () => {
-                res.send('0').end();
+            await getUser(userID).then( async (user) => {
+                await grantPrivilege(user,grant).then(() =>{
+                    res.send('0').end();
+                },
+                () => {
+                    res.send('1').end();
+                });
             }, () => {
                 res.send('1').end();
             });
         } else if (isValidUsername(userID)) {
-            await grantByUsername(grant, userID).then( () => {
-                res.send('0').end();
+            await getUserByUsername(userID).then( async (user) => {
+                await grantPrivilege(user,grant).then(() =>{
+                        res.send('0').end();
+                    },
+                    () => {
+                        res.send('1').end();
+                    });
             }, () => {
                 res.send('1').end();
             });
@@ -192,8 +198,7 @@ router.post('/grant', loggedIn, async (req, res) => {
 
 router.post('/resetDatabase', loggedIn, async (req, res) => {
     const password = req.body.password;
-    const user = req.user;
-    if (!password || password.length < 5 || user === undefined || user.admin !== true) {
+    if (!password || password.length < 5 || req.user === undefined || req.user.admin !== true) {
         res.end();
         return;
     }
@@ -206,8 +211,7 @@ router.post('/resetDatabase', loggedIn, async (req, res) => {
 });
 
 router.post('/closeLab', loggedIn, async (req, res) => {
-    const user = req.user;
-    if (user.labMonitor === true || user.exec === true) {
+    if (req.user.labMonitor === true || req.user.exec === true) {
         await closeLab();
         res.send('0').end();
     } else {

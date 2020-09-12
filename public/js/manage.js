@@ -17,8 +17,8 @@ function cancelLogin() {
 }
 
 function login() {
-    let idNumber = $("#idNumber").val().trim();
-    let password = $("#password").val().trim();
+    const idNumber = $("#idNumber").val().trim();
+    const password = $("#password").val().trim();
     if (!isValidId(idNumber) && !isValidUsername(idNumber)) {
         addError('idNumber', 'Please enter a valid username or ID number here');
         return false;
@@ -26,8 +26,7 @@ function login() {
     if (password.length < 5) {
         addError('password', 'Password is required, and must be at least 5 characters long');
     }
-    let data = JSON.stringify({'idNumber': idNumber, 'password': password});
-
+    const data = JSON.stringify({'idNumber': idNumber, 'password': password});
     postData('/users/login', data, function (statusCode) {
         switch (statusCode) {
             case 0:
