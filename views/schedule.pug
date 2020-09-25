@@ -1,3 +1,5 @@
+mixin button(title, action)
+    button.btn-info.btn.col-md-offset-3.col-md-6(onClick!=action)=title
 doctype html
 
 include common
@@ -14,5 +16,9 @@ html(lang='en')
         +default_nav_bar
         .container
             center
+                +button('Make an Appointment!',"location.href='https://www.picktime.com/CollabLab'")
+                br
+                br
+                br
                 iframe(src='https://calendar.google.com/calendar/embed?title=Scheduled%20Lab%20Hours&mode=WEEK&height=500&wkst=1&bgcolor=%23FFFFFF&src=f4bg9a2vrnb3onn2v941vl62mk%40group.calendar.google.com&color=%23333333&ctz=America%2FNew_York', style='border-width:0', width='800', height='500')
 

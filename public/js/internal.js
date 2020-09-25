@@ -395,7 +395,7 @@ function refocusCursor() {
 function updatePage(newStatus) {
     let isOpen = $('#isOpen');
     if (newStatus.open) {
-        document.getElementById('isOpen').innerHTML = 'OPEN';
+        document.getElementById('isOpen').innerHTML = 'OPEN by appointment ONLY';
         isOpen.removeClass('text-danger');
         isOpen.addClass('text-success');
     } else {

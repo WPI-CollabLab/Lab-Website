@@ -226,7 +226,8 @@ function grantLabMonitor() {
 
 //List user swipe history
 function exportVisits() {
-    const data = {'startDate': $("#visitStartDate").val(), 'endDate': $("#visitEndDate").val()};
+    const data = {'startDate': "09/01/2020", 'endDate': "09/01/2020"}; //The database call doesn't actually filter correctly so this doesn't really matter //$("#visitStartDate").val(), 'endDate': $("#visitEndDate").val()};
+    console.log(data);
     postData('/lab/visits', JSON.stringify(data), function (response) {
         const visitTable = $('#visitTable');
         if(response.length === 0) {
