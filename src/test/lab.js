@@ -23,7 +23,6 @@ describe('Endpoint', () => {
             if (config.nukeOnRestart) {
                 await resetDatabase();
             }
-
         })
         site = require('../index');
         extSession = session(site.external);
@@ -167,6 +166,7 @@ describe('Endpoint', () => {
         });
 
         it('New user can\'t swipe in, bc they aren\'t a lab monitor yet.', (done) => {
+
             intSession
                 .post('/lab/swipe')
                 .send({idNumber: TEST_USER_ID})
@@ -223,11 +223,24 @@ describe('Endpoint', () => {
             })
 
         });
-
         it('Should allow new user to close lab from management system.', function (done) {
             extSession
                 .post('/manage/closeLab')
                 .end((err, res) => {
+                    expect(res.text).to.equal('0');
+                    return intSession
+                        .get('/lab/status')
+                        .end(function (err, res) {
+                            expect(res.body.open).to.equal(false);
+                            expect(Object.keys(res.body.members).length).to.equal(0);
+                            done();
+                        });
+                });
+        });
+        it('Should allow new user to delete account.', function (done) {
+            extSession
+                .post('/manage/deleteSelf')
+                .send({password: TEST_USER_PASSWORD}).end((err,res) => {
                     expect(res.text).to.equal('0');
                     return intSession
                         .get('/lab/status')

@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-
+import {hostname} from "os"
 import {Visit} from "./models/visit";
 import {User} from "./models/user";
 
@@ -20,7 +20,7 @@ export async function setPassword(user, password, needsPassword = false) {
 }
 
 export async function getUser(idNumber) {
-    return User.findOne({idNumber: idNumber}).then((user) => {
+    return User.findOne(idNumber).then((user) => {
             if(user !== undefined) {
                 return user;
             } else {
@@ -125,6 +125,10 @@ export async function changeName(user, newName) {
 }
 
 export async function clearDatabase() {
+    if(hostname() === "collablabvm") {
+        console.log("bruh moment prevented, you're welcome.");
+        return;
+    }
     let users = await User.find();
     for(let user of users) {
         await user.remove();
