@@ -31,7 +31,7 @@ export async function getUser(idNumber) {
 }
 
 export async function getUserByUsername(username) {
-    return User.findOne({username: username}).then((user) => {
+    return User.findOne({where: {username: username}}).then((user) => {
         if(user !== undefined) {
             return user;
         } else {
@@ -74,8 +74,6 @@ export async function createUser(idNumber, username, name, password, labMonitor,
 export function correctCreds(user, password) {
     return user.password === hash(password, user.salt);
 }
-
-
 
 export async function usernameAvailable(username) {
     return getUserByUsername(username).then(() => {
@@ -141,5 +139,6 @@ export async function clearDatabase() {
 }
 
 export async function resetPassword(user) {
-    return setPassword(user, user.idNumber.toString(), true);
+    await setPassword(user, user.idNumber.toString(), true);
+    return expirePassword(user);
 }

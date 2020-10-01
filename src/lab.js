@@ -2,6 +2,18 @@ import express from "express";
 
 export const internal = express.Router();
 export const external = express.Router();
+export const reloadOccupancyFromDB = async () => {
+    let openVisits = await Visit.find({where: {outTime: null},relations: ["user"], order: {id: "DESC"}});
+    for(let visit of openVisits) {
+        console.log(visit);
+        if (labStatus.members[visit.user.idNumber] === undefined) {
+            labStatus.members[visit.user.idNumber] = visit.user;
+            labStatus.open = true;
+            names[visit.user.username] = toDisp(visit.user);
+
+        }
+    }
+}
 
 import {getUser,getUserByUsername} from './userManagement'
 import {authInRequest,idNumberInRequest,loggedIn,isValidNickname} from "./common";
@@ -64,7 +76,7 @@ export async function closeLab() {
 }
 
 export async function getVisits(startDate = new Date(0), endDate = new Date()) {
-    return await Visit.find({inTime: MoreThan(startDate),outTime:LessThan(endDate),relations: ["user"]});
+    return await Visit.find({inTime: MoreThan(startDate),outTime:LessThan(endDate),relations: ["user"],order: {id: "DESC"}});
 }
 
 export async function updateList()  {
@@ -120,9 +132,11 @@ function toDisp(user) {
 }
 
 async function swipeOut(user) {
+    console.log(user);
     delete labStatus.members[user.idNumber];
     delete names[user.username];
-    let visit = await Visit.findOne({"user": user, "order": {"id": "DESC"}});
+    let visit = await Visit.findOne({where:{outTime: null,user: user},relations:["user"], order: {id: "DESC"}});
+    console.log(visit);
     visit.outTime = new Date();
     await visit.save();
 }

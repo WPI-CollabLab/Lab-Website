@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import {createConnection,getConnectionManager} from 'typeorm'
 import {nukeOnRestart,cookieSecret,internalPort,externalPort} from './config'
 import {router as userRouter} from './users'
-import {internal as labInt, external as labExt} from './lab'
+import {internal as labInt, external as labExt, reloadOccupancyFromDB} from './lab'
 import {routes as manageRoutes} from './manage'
 import {getLogin,resetDatabase} from './common'
 import {User} from "./models/user";
@@ -19,6 +19,7 @@ if(!getConnectionManager().has("default")) {
         if (nukeOnRestart) {
             await resetDatabase();
         }
+        await reloadOccupancyFromDB();
     });
 }
 
